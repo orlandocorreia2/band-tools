@@ -4,7 +4,7 @@ import MusicItem from "./components/MusicItem";
 import { MusicDataInterface } from "./interfaces";
 import { getRealTime } from "../../infra/database/firebase";
 
-import { Container, Title } from "./styles";
+import { Container, Version, Title } from "./styles";
 
 export default function Setlist() {
   const [data, setData] = useState<MusicDataInterface[]>([]);
@@ -15,6 +15,7 @@ export default function Setlist() {
 
   return (
     <Container>
+      <Version>Ver: 1.0.0</Version>
       <Title>SETLIST</Title>
       {data && data.length > 0 && (
         <FlatList
