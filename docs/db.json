@@ -1,8 +1,8 @@
 {
-  "setlists": [
+  "setlist": [
     {
       "id": "7d450fc9-09f6-462b-94b7-41bbe50a2ebd",
-      "title": "War Pigs"
+      "title": "End of the Beginning"
     },
     {
       "id": "857482f7-765c-4c39-9893-ef2f2e552da3",
@@ -14,75 +14,87 @@
     },
     {
       "id": "03690f33-2ae2-4246-b254-b076eaf15377",
-      "title": "Sweet Leaf"
+      "title": "Cornucopia"
     },
     {
       "id": "7ec84e5b-8a6a-4880-90fc-46fcf170c41d",
-      "title": "Into The Void"
-    },
-    {
-      "id": "2f03c531-5441-4286-9b04-636595a315ad",
-      "title": "Black Sabbath"
-    },
-    {
-      "id": "c9ddb88a-e2cd-44f4-9998-059d8a1ae807",
-      "title": "N.I.B"
-    },
-    {
-      "id": "1c3665e9-b7f2-4044-b7dd-8f0dbbc52187",
-      "title": "Iron Man"
-    },
-    {
-      "id": "613bf51c-9b75-425c-94bf-7d20ab1219aa",
-      "title": "Paranoid"
-    },
-    {
-      "id": "361180ab-dfcd-4ecf-b96d-32b525b32b50",
-      "title": "Children of the Grave"
-    },
-    {
-      "id": "33ace0fc-60c0-4001-b549-c2daa2eefbad",
-      "title": "End of the Beginning"
-    },
-    {
-      "id": "f94214c9-f2ee-4c80-a8a5-308e5822cfef",
-      "title": "Warning"
-    },
-    {
-      "id": "9c728891-ecfc-447b-9cb7-c3a58feb4376",
-      "title": "Holy Diver"
-    },
-    {
-      "id": "2ee45422-14af-4bdf-b767-2ac931d005ac",
-      "title": "Wheels of Confusion"
-    },
-    {
-      "id": "a74d0f50-52a1-45b9-a544-26fa48771fb1",
       "title": "Fairies Wear Boots"
     },
     {
-      "id": "5646268f-3cc4-4ae1-bb04-30ea92066a76",
+      "id": "2f03c531-5441-4286-9b04-636595a315ad",
+      "title": "Lord of this World"
+    },
+    {
+      "id": "c9ddb88a-e2cd-44f4-9998-059d8a1ae807",
+      "title": "Black Sabbath"
+    },
+    {
+      "id": "1c3665e9-b7f2-4044-b7dd-8f0dbbc52187",
       "title": "Mr. Crowley"
     },
     {
-      "id": "795d7ac6-8908-433f-a914-28646563be14",
+      "id": "613bf51c-9b75-425c-94bf-7d20ab1219aa",
+      "title": "Warning"
+    },
+    {
+      "id": "361180ab-dfcd-4ecf-b96d-32b525b32b50",
+      "title": "Holy Diver"
+    },
+    {
+      "id": "33ace0fc-60c0-4001-b549-c2daa2eefbad",
       "title": "Stargazer"
     },
     {
-      "id": "6c1dc2d2-e7fe-4614-bef0-835754b32276",
-      "title": "Under the Sun"
+      "id": "f843afa7-8a5d-4217-ade7-fc8250699ce6",
+      "title": "__________"
     },
     {
-      "id": "0d077101-a653-48f3-875a-86a9f84a51e6",
-      "title": "Heaven and Hell"
+      "id": "f94214c9-f2ee-4c80-a8a5-308e5822cfef",
+      "title": "War Pigs"
     },
     {
-      "id": "519cd208-bc1b-4ab0-acbb-3a0b87a55800",
+      "id": "9c728891-ecfc-447b-9cb7-c3a58feb4376",
+      "title": "Into The Void"
+    },
+    {
+      "id": "2ee45422-14af-4bdf-b767-2ac931d005ac",
+      "title": "Iron Man"
+    },
+    {
+      "id": "a74d0f50-52a1-45b9-a544-26fa48771fb1",
+      "title": "Sweet Leaf"
+    },
+    {
+      "id": "5646268f-3cc4-4ae1-bb04-30ea92066a76",
       "title": "Bark at the Moon"
     },
     {
-      "id": "bf430a4e-1114-4540-b89b-377209f91414",
+      "id": "795d7ac6-8908-433f-a914-28646563be14",
+      "title": "Heaven and Hell"
+    },
+    {
+      "id": "6c1dc2d2-e7fe-4614-bef0-835754b32276",
       "title": "Crazy Train"
+    },
+    {
+      "id": "0d077101-a653-48f3-875a-86a9f84a51e6",
+      "title": "N.I.B"
+    },
+    {
+      "id": "519cd208-bc1b-4ab0-acbb-3a0b87a55800",
+      "title": "Children of the Grave"
+    },
+    {
+      "id": "bf430a4e-1114-4540-b89b-377209f91414",
+      "title": "Sabbath Bloody Sabbath/Paranoid"
+    },
+    {
+      "id": "85aeee35-5955-4143-a1f1-136f49ce8cc2",
+      "title": "Encore"
+    },
+    {
+      "id": "347859a9-c5ca-45d2-a7f9-ebef81ed09b2",
+      "title": "Symptom of the Universe"
     }
   ]
 }

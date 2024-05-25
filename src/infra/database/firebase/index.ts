@@ -1,6 +1,7 @@
 import { initializeApp } from "firebase/app";
 import { firebaseConfig } from "./firebaseConfig";
 import { getDatabase, ref, set, onValue } from "firebase/database";
+import { GetRealTimeType } from "./interfaces";
 
 initializeApp(firebaseConfig);
 
@@ -11,7 +12,7 @@ export const save = async (key: string, data: any) => {
   return await set(reference, data);
 };
 
-export const getRealTime = (key: string, setData: any) => {
+export const getRealTime = ({ key, fn }: GetRealTimeType) => {
   const reference = ref(db, key);
   onValue(reference, (snapshot) => {
     let data: any[] = [];
@@ -19,6 +20,6 @@ export const getRealTime = (key: string, setData: any) => {
     snapshotVal?.forEach((snapVal: any) => {
       data.push(snapVal);
     });
-    setData(data);
+    fn(data);
   });
 };
