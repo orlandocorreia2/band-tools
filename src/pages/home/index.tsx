@@ -8,7 +8,7 @@ export default function Home() {
         justifyContent: "center",
       }}
     >
-      <Text style={{ textAlign: "center" }}>Home</Text>
+      <Text style={{ textAlign: "center", color: "#FFF" }}>Página Inicial</Text>
     </View>
   );
 }

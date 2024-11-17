@@ -19,7 +19,7 @@ export default function Layout() {
           drawerStyle: {
             backgroundColor: "#1D1F25",
             paddingTop: 32,
-            width: "50%",
+            width: "55%",
           },
           sceneStyle: {
             backgroundColor: "#1D1f25",

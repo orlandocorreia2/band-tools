@@ -1,6 +1,6 @@
 import { PressableProps } from "react-native";
 
 export interface TabBarButtonProps extends PressableProps {
-  title?: string;
+  title?: "" | "Início" | "SetList";
   isFocused?: boolean;
 }

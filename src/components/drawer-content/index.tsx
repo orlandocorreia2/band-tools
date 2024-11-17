@@ -1,13 +1,16 @@
 import { DrawerContentComponentProps } from "@react-navigation/drawer";
-import { View } from "react-native";
 import DrawerButton from "./drawer-button/indext";
-import { Content } from "./syles";
+import { Container, Content } from "./syles";
+import DrawerHeader from "./drawer-header";
+import { useCallback } from "react";
+import { TabBarButtonProps } from "./drawer-button/types";
 
 export default function DrawerContent(
   drawerProps: DrawerContentComponentProps
 ) {
   return (
-    <View style={{ flex: 1, paddingTop: 32 }}>
+    <Container>
+      <DrawerHeader />
       {drawerProps.state.routes.map((route, index) => {
         const isFocused = drawerProps.state.index === index;
         const options = drawerProps.descriptors[route.key].options;
@@ -28,13 +31,13 @@ export default function DrawerContent(
           <Content>
             <DrawerButton
               key={options.drawerLabel as string}
-              title={options.drawerLabel as string}
+              title={options.drawerLabel as TabBarButtonProps["title"]}
               onPress={onPress}
               isFocused={isFocused}
             />
           </Content>
         );
       })}
-    </View>
+    </Container>
   );
 }
