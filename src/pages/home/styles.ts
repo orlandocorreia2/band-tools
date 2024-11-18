@@ -7,8 +7,8 @@ export const Container = styled.View`
 
 export const Title = styled.Text`
   color: #fff;
-  font-size: 18;
-  margin-bottom: 16;
+  font-size: 18px;
+  margin-bottom: 16px;
 `;
 
 export const ContainerCards = styled.View`

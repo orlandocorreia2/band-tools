@@ -28,7 +28,7 @@ export default function DrawerContent(
         };
 
         return (
-          <Content>
+          <Content key={`drawer-item-button-${index}`}>
             <DrawerButton
               key={options.drawerLabel as string}
               title={options.drawerLabel as TabBarButtonProps["title"]}

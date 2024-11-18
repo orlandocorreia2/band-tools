@@ -28,6 +28,7 @@ export default function Layout() {
         }}
       >
         <Drawer.Screen
+          key={`drawer-screen-home`}
           name="index"
           options={{
             drawerLabel: "Início",
@@ -37,6 +38,7 @@ export default function Layout() {
           }}
         />
         <Drawer.Screen
+          key={`drawer-screen-setlist`}
           name="setlist"
           options={{
             drawerLabel: "SetList",

@@ -15,14 +15,12 @@ export const ContainerInfo = styled.View`
   flex: 1;
 `;
 
-export const Logo = styled.Image.attrs({
-  resizeMode: "stretch",
-})`
-  width: 70;
-  height: 70;
+export const Logo = styled.Image.attrs({ resizeMode: "stretch" })`
+  width: 70px;
+  height: 70px;
   border: 2px;
   border-color: #fff;
-  border-radius: 50%;
+  border-radius: 35px;
 `;
 
 export const Title = styled.Text`
@@ -36,12 +34,12 @@ export const ContainerSocialButtons = styled.View`
   flex-direction: row;
   justify-content: space-around;
   align-items: center;
-  margin-top: 16;
+  margin-top: 16px;
 `;
 
 export const Icon = styled(Feather)`
   color: #fff;
-  font-size: 18;
+  font-size: 18px;
 `;
 
 export const Divisor = styled.View`

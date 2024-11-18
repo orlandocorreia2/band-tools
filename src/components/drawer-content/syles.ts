@@ -6,5 +6,5 @@ export const Container = styled.View`
 `;
 
 export const Content = styled.View`
-  padding-left: 8;
+  padding-left: 8px;
 `;

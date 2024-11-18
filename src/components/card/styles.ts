@@ -2,11 +2,11 @@ import styled from "styled-components/native";
 
 export const Container = styled.View`
   width: auto;
-  max-height: 400;
-  margin-bottom: 16;
+  max-height: 400px;
+  margin-bottom: 16px;
   border: 3px;
   background-color: #fff;
-  padding-bottom: 8;
+  padding-bottom: 8px;
 `;
 
 export const Header = styled.View`
@@ -14,7 +14,7 @@ export const Header = styled.View`
   height: 30%;
   background-color: black;
   justify-content: center;
-  margin-bottom: 8;
+  margin-bottom: 8px;
 `;
 
 export const Title = styled.Text`
@@ -31,7 +31,7 @@ export const Content = styled.View`
 
 export const ScrollView = styled.ScrollView.attrs({ centerContent: true })`
   flex: 1;
-  padding-inline: 5;
+  padding-inline: 5px;
 `;
 
 type ContentInfoProps = {

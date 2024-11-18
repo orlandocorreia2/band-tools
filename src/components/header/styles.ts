@@ -6,19 +6,19 @@ export const Container = styled.View`
   justify-content: center;
   align-items: center;
   background-color: transparent;
-  padding-top: 24;
-  padding-bottom: 18;
+  padding-top: 24px;
+  padding-bottom: 18px;
 `;
 
 export const Title = styled.Text`
-  font-size: 20;
+  font-size: 20px;
   color: #fff;
 `;
 
 export const ContainerButtonMenu = styled.View`
   position: absolute;
-  right: 8;
-  padding-top: 24;
-  padding-bottom: 18;
+  right: 8px;
+  padding-top: 24px;
+  padding-bottom: 18px;
   color: #fff;
 `;

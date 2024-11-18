@@ -8,9 +8,18 @@ export default function Home() {
       <Container>
         <Title>Página Inicial</Title>
         <ContainerCards>
-          <Card title="PROX. DT" informations={["26/10"]} />
-          <Card title="CAIXA" informations={["R$ 59,00"]} />
           <Card
+            key={`card-next-date`}
+            title="PROX. DT"
+            informations={["26/10"]}
+          />
+          <Card
+            key={`card-next-box`}
+            title="CAIXA"
+            informations={["R$ 59,00"]}
+          />
+          <Card
+            key={`card-next-todos`}
             title="TAREFAS"
             informations={[
               "Tio: Desenvolver app",
