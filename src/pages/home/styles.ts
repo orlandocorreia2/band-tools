@@ -12,5 +12,5 @@ export const Title = styled.Text`
 `;
 
 export const ContainerCards = styled.View`
-  width: 50%;
+  width: 75%;
 `;

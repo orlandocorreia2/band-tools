@@ -6,7 +6,7 @@ import SetlistPage from "../pages/setlist";
 export default function SetList() {
   return (
     <DrawerSceneWrapper>
-      <Header />
+      <Header title="Setlist" />
       <Container>
         <SetlistPage />
       </Container>

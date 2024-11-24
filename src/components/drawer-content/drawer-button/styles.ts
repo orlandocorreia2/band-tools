@@ -2,7 +2,7 @@ import styled from "styled-components/native";
 import { Feather } from "@expo/vector-icons";
 
 export const PressableStyled = styled.Pressable`
-  padding-bottom: 16px;
+  margin-bottom: 24px;
   flex-direction: row;
   align-items: center;
 `;
@@ -13,12 +13,15 @@ type TitleProps = {
 
 export const Title = styled.Text<TitleProps>`
   font-size: 20px;
-  color: #fff;
-  /* color: ${({ isFocused }) => isFocused && "#727D98"}; */
+  color: ${({ isFocused }) => (isFocused ? "#999999" : "#FFFFFF")};
 `;
 
-export const Icon = styled(Feather)`
-  color: #fff;
+type IconProps = {
+  isFocused: boolean;
+};
+
+export const Icon = styled(Feather)<IconProps>`
+  color: ${({ isFocused }) => (isFocused ? "#999999" : "#FFFFFF")};
   font-size: 18px;
   margin-right: 4px;
 `;

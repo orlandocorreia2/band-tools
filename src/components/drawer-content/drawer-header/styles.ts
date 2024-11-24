@@ -1,5 +1,6 @@
 import styled from "styled-components/native";
 import { Feather } from "@expo/vector-icons";
+import { Image } from "expo-image";
 
 export const Container = styled.View`
   width: 100%;
@@ -9,13 +10,15 @@ export const Container = styled.View`
   align-items: center;
 `;
 
-export const ContainerLogo = styled.View``;
+export const ContainerLogo = styled.View`
+  z-index: 1;
+`;
 
 export const ContainerInfo = styled.View`
   flex: 1;
 `;
 
-export const Logo = styled.Image.attrs({ resizeMode: "stretch" })`
+export const Logo = styled(Image).attrs({ resizeMode: "stretch" })`
   width: 70px;
   height: 70px;
   border: 2px;

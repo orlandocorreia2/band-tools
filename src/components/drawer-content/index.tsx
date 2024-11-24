@@ -14,7 +14,6 @@ export default function DrawerContent(
       {drawerProps.state.routes.map((route, index) => {
         const isFocused = drawerProps.state.index === index;
         const options = drawerProps.descriptors[route.key].options;
-
         const onPress = () => {
           const event = drawerProps.navigation.emit({
             type: "drawerItemPress",

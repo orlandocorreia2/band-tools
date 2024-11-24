@@ -1,8 +1,9 @@
 import styled from "styled-components/native";
 
 export const Container = styled.View`
-  width: auto;
+  width: 100%;
   max-height: 400px;
+  min-height: 120px;
   margin-bottom: 16px;
   border: 3px;
   background-color: #fff;
@@ -39,6 +40,6 @@ type ContentInfoProps = {
 };
 export const ContentInfo = styled.Text<ContentInfoProps>`
   color: #000;
-  font-weight: 600;
-  font-size: ${({ fontSize }) => fontSize || 22};
+  font-size: ${({ fontSize }) => fontSize || 20};
+  text-align: center;
 `;

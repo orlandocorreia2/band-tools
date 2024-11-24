@@ -1,12 +1,12 @@
 import Header from "../components/header";
 import DrawerSceneWrapper from "../components/drawer-scene-wrapper";
-import Home from "../pages/home";
+import RepertoirePage from "../pages/repertoire";
 
-export default function Index() {
+export default function Repertoire() {
   return (
     <DrawerSceneWrapper>
-      <Header title="Home" />
-      <Home />
+      <Header title="Repertório" />
+      <RepertoirePage />
     </DrawerSceneWrapper>
   );
 }

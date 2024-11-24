@@ -38,12 +38,32 @@ export default function Layout() {
           }}
         />
         <Drawer.Screen
+          key={`drawer-screen-show-schedule`}
+          name="schedule"
+          options={{
+            drawerLabel: "Agenda",
+            drawerIcon: ({ color }) => (
+              <Feather name="calendar" size={20} color={color} />
+            ),
+          }}
+        />
+        <Drawer.Screen
           key={`drawer-screen-setlist`}
           name="setlist"
           options={{
             drawerLabel: "SetList",
             drawerIcon: ({ color }) => (
               <Feather name="music" size={20} color={color} />
+            ),
+          }}
+        />
+        <Drawer.Screen
+          key={`drawer-screen-repertoire`}
+          name="repertoire"
+          options={{
+            drawerLabel: "Repertório",
+            drawerIcon: ({ color }) => (
+              <Feather name="list" size={20} color={color} />
             ),
           }}
         />

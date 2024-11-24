@@ -1,12 +1,12 @@
 import Header from "../components/header";
 import DrawerSceneWrapper from "../components/drawer-scene-wrapper";
-import Home from "../pages/home";
+import SchedulePage from "../pages/schedule";
 
-export default function Index() {
+export default function Schedule() {
   return (
     <DrawerSceneWrapper>
-      <Header title="Home" />
-      <Home />
+      <Header title="Agenda" />
+      <SchedulePage></SchedulePage>
     </DrawerSceneWrapper>
   );
 }
