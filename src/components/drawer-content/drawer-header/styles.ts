@@ -12,13 +12,14 @@ export const Container = styled.View`
 
 export const ContainerLogo = styled.View`
   z-index: 1;
+  elevation: 1;
 `;
 
 export const ContainerInfo = styled.View`
   flex: 1;
 `;
 
-export const Logo = styled(Image).attrs({ resizeMode: "stretch" })`
+export const Logo = styled(Image).attrs({ contentFit: "stretch" })`
   width: 70px;
   height: 70px;
   border: 2px;

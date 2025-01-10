@@ -7,7 +7,7 @@ export const Container = styled.View`
   flex: 1;
   align-items: center;
   justify-content: center;
-  background-color: transparent;
+  background-color: rgba(30, 30, 30, 0.5);
 `;
 
 export const Containt = styled.View`
@@ -24,6 +24,15 @@ export const Title = styled.Text`
   font-size: 22px;
 `;
 
+export const ScrollView = styled.ScrollView`
+  margin-bottom: 40px;
+`;
+
+export const Body = styled.View`
+  flex-direction: column;
+  padding: 16px 8px;
+`;
+
 export const Close = styled.Pressable`
   position: absolute;
   top: 16px;
@@ -35,4 +44,15 @@ export const Close = styled.Pressable`
 export const Icon = styled(Feather)`
   color: rgba(0, 0, 0, 0.4);
   font-size: 18px;
+`;
+
+export const Footer = styled.View`
+  width: 100%;
+  position: absolute;
+  bottom: 16px;
+  right: 16px;
+  flex-direction: row;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 16px;
 `;

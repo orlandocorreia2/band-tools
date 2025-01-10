@@ -1,9 +1,9 @@
 import { SafeAreaView } from "react-native-safe-area-context";
-import { MusicItemProps } from "../../types";
+import { MusicComponentProps } from "../../types";
 
 import { Container, Title } from "./styles";
 
-export default function MusicItem({ title }: MusicItemProps) {
+export default function MusicItem({ title }: MusicComponentProps) {
   return (
     <SafeAreaView>
       <Container>

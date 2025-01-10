@@ -19,7 +19,7 @@ export default function Card({ title, informations }: CardProps) {
         {informations.length > 1 ? (
           <ScrollView>
             {informations.map((information, index) => (
-              <ContentInfo key={`card-content-info-${index}`} fontSize={20}>
+              <ContentInfo key={`card-content-info-${index}`}>
                 {information}
               </ContentInfo>
             ))}
