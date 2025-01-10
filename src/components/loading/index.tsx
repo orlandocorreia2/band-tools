@@ -1,5 +1,5 @@
 import { ActivityIndicator } from "react-native";
-import { Container, Icon } from "./styles";
+import { Container } from "./styles";
 
 export default function Loading() {
   return (
