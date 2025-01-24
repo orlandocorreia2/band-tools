@@ -2,7 +2,6 @@ import { DrawerContentComponentProps } from "@react-navigation/drawer";
 import DrawerButton from "./drawer-button/indext";
 import { Container, Content } from "./syles";
 import DrawerHeader from "./drawer-header";
-import { useCallback } from "react";
 import { TabBarButtonProps } from "./drawer-button/types";
 
 export default function DrawerContent(

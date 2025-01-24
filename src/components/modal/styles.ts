@@ -1,5 +1,4 @@
 import styled from "styled-components/native";
-import { Feather } from "@expo/vector-icons";
 
 export const ModalStyled = styled.Modal``;
 
@@ -7,7 +6,7 @@ export const Container = styled.View`
   flex: 1;
   align-items: center;
   justify-content: center;
-  background-color: rgba(30, 30, 30, 0.5);
+  background-color: rgba(0, 0, 0, 0.8);
 `;
 
 export const Containt = styled.View`
@@ -22,6 +21,7 @@ export const Containt = styled.View`
 export const Title = styled.Text`
   text-align: center;
   font-size: 22px;
+  color: #fff;
 `;
 
 export const ScrollView = styled.ScrollView`
@@ -39,11 +39,6 @@ export const Close = styled.Pressable`
   right: 16px;
   z-index: 1;
   elevation: 1;
-`;
-
-export const Icon = styled(Feather)`
-  color: rgba(0, 0, 0, 0.4);
-  font-size: 18px;
 `;
 
 export const Footer = styled.View`

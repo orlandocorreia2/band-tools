@@ -1,17 +1,20 @@
-import { useCallback, useEffect, useMemo, useState } from "react";
+import React, { useCallback, useEffect, useMemo, useState } from "react";
 import uuid from "react-uuid";
-import { FlatList } from "react-native";
+import { Alert, FlatList, RefreshControl } from "react-native";
 import MusicItem from "./components/music-item";
 import { MusicDataProps } from "./types";
 import BtnAdd from "@/src/components/btn-add";
-import { Info, NoContent } from "./styles";
 import Modal from "@/src/components/modal";
 import Input from "@/src/components/input";
 import Picker from "@/src/components/picker";
 import { findAll, save } from "@/src/infra/database/firebase";
 import Loading from "@/src/components/loading";
+import { useMenu } from "@/src/contexts/menu";
+import { Info, NoContent } from "./styles";
 
 export default function RepertoirePage() {
+  const { handleMenuIdOpened } = useMenu();
+  const [refreshing, setRefreshing] = useState(false);
   const [loading, setLoading] = useState(true);
   const [modalVisible, setModalVisible] = useState(false);
   const [data, setData] = useState<MusicDataProps[]>([]);
@@ -24,32 +27,59 @@ export default function RepertoirePage() {
 
   const closeModalAddMusic = useCallback(() => {
     setModalVisible(false);
+    setMusic({} as MusicDataProps);
   }, []);
 
-  const saveModalAddMusic = useCallback(() => {
+  const setNewMusic = useCallback((musicItem: MusicDataProps) => {
+    setMusic(musicItem);
+  }, []);
+
+  const addMusic = useCallback(() => {
     const newMusic = {
       ...music,
       id: uuid(),
       order: data?.length ? data.length + 1 : 1,
     };
     const saveData = data && data.length ? data.concat([newMusic]) : [newMusic];
-    save("bands/5878eab5-b7c3-4da1-89dc-02a3c1d790d7/repertoire", saveData);
-    init();
-    setMusic({} as MusicDataProps);
-    setModalVisible(false);
+    save({
+      key: "bands/5878eab5-b7c3-4da1-89dc-02a3c1d790d7/repertoire",
+      data: saveData,
+    });
+    setData(saveData);
   }, [data, music]);
 
-  const setNewMusic = useCallback((musicItem: MusicDataProps) => {
-    setMusic(musicItem);
-  }, []);
+  const updateMusic = useCallback(() => {
+    setData((data) => {
+      const saveMusic = { ...music, order: data?.length ? data.length + 1 : 1 };
+      let musicIndex = 0;
+      const updatedData = data.map((item, index) => {
+        if (item.id == music.id) {
+          musicIndex = index;
+          return saveMusic;
+        }
+        return item;
+      });
+      save({
+        key: `bands/5878eab5-b7c3-4da1-89dc-02a3c1d790d7/repertoire/${musicIndex}`,
+        data: saveMusic,
+      });
+      return updatedData;
+    });
+  }, [music]);
+
+  const handleSave = useCallback(() => {
+    music.id ? updateMusic() : addMusic();
+    setMusic({} as MusicDataProps);
+    setModalVisible(false);
+  }, [music]);
 
   const modal = useMemo(() => {
     return (
       <Modal
         visible={modalVisible}
-        title="Adicionar Música"
+        title="Salvar Música"
         onClose={closeModalAddMusic}
-        onSave={saveModalAddMusic}
+        onSave={handleSave}
       >
         <Input
           title="Título"
@@ -125,6 +155,43 @@ export default function RepertoirePage() {
     );
   }, [modalVisible, music]);
 
+  const handleEdit = useCallback(
+    (id: string) => {
+      const indexMusic = data.findIndex((item) => item.id == id);
+      setMusic(data[indexMusic]);
+      setModalVisible(true);
+    },
+    [data]
+  );
+
+  const handleDelete = useCallback((id: string) => {
+    Alert.alert("Excluir Música", "Deseja realmente exluir esta música?", [
+      {
+        text: "Cancelar",
+        onPress: () => handleMenuIdOpened(""),
+        style: "cancel",
+      },
+      {
+        text: "Sim",
+        onPress: () =>
+          setData((data) => {
+            const updatedData = data.filter((item) => item.id != id);
+            save({
+              key: "bands/5878eab5-b7c3-4da1-89dc-02a3c1d790d7/repertoire",
+              data: updatedData,
+            });
+            return updatedData;
+          }),
+      },
+    ]);
+  }, []);
+
+  const onRefresh = useCallback(async () => {
+    setRefreshing(true);
+    await init();
+    setRefreshing(false);
+  }, []);
+
   const init = useCallback(async () => {
     findAll({
       key: "bands/5878eab5-b7c3-4da1-89dc-02a3c1d790d7/repertoire",
@@ -167,9 +234,19 @@ export default function RepertoirePage() {
         <FlatList
           data={data}
           renderItem={({ item }) => (
-            <MusicItem id={item.id} title={item.title} />
+            <MusicItem
+              id={item.id}
+              title={item.title}
+              actions={{
+                edit: () => handleEdit(item.id),
+                delete: () => handleDelete(item.id),
+              }}
+            />
           )}
           keyExtractor={(item) => item.id}
+          refreshControl={
+            <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
+          }
         />
       )}
     </>

@@ -1,5 +1,4 @@
 import styled from "styled-components/native";
-import { Feather } from "@expo/vector-icons";
 
 export const Container = styled.View`
   position: absolute;
@@ -13,9 +12,4 @@ export const PressableStyled = styled.Pressable`
   right: 16px;
   z-index: 1;
   elevation: 1;
-`;
-
-export const Icon = styled(Feather)`
-  color: #fff;
-  font-size: 40px;
 `;

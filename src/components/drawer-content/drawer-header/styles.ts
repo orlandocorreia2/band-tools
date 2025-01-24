@@ -1,5 +1,4 @@
 import styled from "styled-components/native";
-import { Feather } from "@expo/vector-icons";
 import { Image } from "expo-image";
 
 export const Container = styled.View`
@@ -39,11 +38,6 @@ export const ContainerSocialButtons = styled.View`
   justify-content: space-around;
   align-items: center;
   margin-top: 16px;
-`;
-
-export const Icon = styled(Feather)`
-  color: #fff;
-  font-size: 18px;
 `;
 
 export const Divisor = styled.View`

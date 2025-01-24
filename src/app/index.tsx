@@ -5,7 +5,7 @@ import Home from "../pages/home";
 export default function Index() {
   return (
     <DrawerSceneWrapper>
-      <Header title="Home" />
+      <Header title="Página Inicial" />
       <Home />
     </DrawerSceneWrapper>
   );

@@ -1,4 +1,4 @@
-import { useCallback } from "react";
+import React, { useCallback } from "react";
 import { Pressable } from "react-native";
 import * as Linking from "expo-linking";
 import {
@@ -7,10 +7,10 @@ import {
   ContainerLogo,
   ContainerSocialButtons,
   Divisor,
-  Icon,
   Logo,
   Title,
 } from "./styles";
+import { Icon } from "@/src/shared/styles";
 
 export default function DrawerHeader() {
   const onPress = useCallback((name: string) => {
@@ -36,13 +36,13 @@ export default function DrawerHeader() {
           <Title>Electric Grave</Title>
           <ContainerSocialButtons>
             <Pressable onPress={() => onPress("instagram")}>
-              <Icon name="instagram" />
+              <Icon name="instagram" color="#fff" />
             </Pressable>
             <Pressable onPress={() => onPress("youtube")}>
-              <Icon name="youtube" />
+              <Icon name="youtube" color="#fff" />
             </Pressable>
             <Pressable onPress={() => onPress("site")}>
-              <Icon name="link" />
+              <Icon name="link" color="#fff" />
             </Pressable>
           </ContainerSocialButtons>
         </ContainerInfo>

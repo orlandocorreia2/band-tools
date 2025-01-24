@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import uuid from "react-uuid";
 import { FlatList } from "react-native";
 import AsyncStorage from "@react-native-async-storage/async-storage";
@@ -70,24 +70,27 @@ export default function SetlistPage() {
       obsevation: "Observacao",
     }));
 
-    save("bands", {
-      "5878eab5-b7c3-4da1-89dc-02a3c1d790d7": {
-        name: "Eléctric Grave",
-        members: {
-          [uuid()]: { name: "Orlando Nascimento" },
-          [uuid()]: { name: "Alex Coutinho" },
-          [uuid()]: { name: "Guilherme" },
-          [uuid()]: { name: "Gorba" },
+    save({
+      key: "bands",
+      data: {
+        "5878eab5-b7c3-4da1-89dc-02a3c1d790d7": {
+          name: "Eléctric Grave",
+          members: {
+            [uuid()]: { name: "Orlando Nascimento" },
+            [uuid()]: { name: "Alex Coutinho" },
+            [uuid()]: { name: "Guilherme" },
+            [uuid()]: { name: "Gorba" },
+          },
+          setlist,
+          location: { country: "Brasil", state: "São Paulo" },
+          logo: "image.png",
+          musicalGenre: "Doom Metal",
+          description: "Banda mais foda!",
+          bandCreatedAt: new Date(),
+          createdAt: new Date(),
+          updatedAt: new Date(),
+          deletedAt: null,
         },
-        setlist,
-        location: { country: "Brasil", state: "São Paulo" },
-        logo: "image.png",
-        musicalGenre: "Doom Metal",
-        description: "Banda mais foda!",
-        bandCreatedAt: new Date(),
-        createdAt: new Date(),
-        updatedAt: new Date(),
-        deletedAt: null,
       },
     });
   }, []);

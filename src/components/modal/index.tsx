@@ -1,3 +1,4 @@
+import { Icon } from "@/src/shared/styles";
 import Button from "../button";
 import {
   ModalStyled,
@@ -6,7 +7,6 @@ import {
   Title,
   ScrollView,
   Close,
-  Icon,
   Body,
   Footer,
 } from "./styles";
@@ -24,25 +24,15 @@ export default function Modal({
       <Container>
         <Containt>
           <Close onPress={onClose}>
-            <Icon name="x" />
+            <Icon name="x" color="#fff" />
           </Close>
           <Title>{title}</Title>
           <ScrollView>
             <Body>{children}</Body>
           </ScrollView>
           <Footer>
-            <Button
-              title="Cancelar"
-              onPress={onClose}
-              borderColor="#ccc"
-              color="red"
-            />
-            <Button
-              title="Salvar"
-              onPress={onSave}
-              borderColor="#ccc"
-              color="green"
-            />
+            <Button title="Cancelar" onPress={onClose} color="red" />
+            <Button title="Salvar" onPress={onSave} color="green" />
           </Footer>
         </Containt>
       </Container>

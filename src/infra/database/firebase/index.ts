@@ -1,7 +1,7 @@
 import { initializeApp } from "firebase/app";
 import { firebaseConfig } from "./firebaseConfig";
 import { getDatabase, ref, set, onValue, get, child } from "firebase/database";
-import { GetRealTimeProps } from "./types";
+import { GetRealTimeProps, SaveProps } from "./types";
 
 initializeApp(firebaseConfig);
 
@@ -14,7 +14,7 @@ export const findAll = async ({ key, fn }: GetRealTimeProps) => {
   fn(data);
 };
 
-export const save = async (key: string, data: any) => {
+export const save = async ({ key, data }: SaveProps) => {
   const reference = ref(db, key);
   return await set(reference, data);
 };

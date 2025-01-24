@@ -1,3 +1,5 @@
+import { MenuProps } from "@/src/components/menu";
+
 export type MusicDataProps = {
   id: string;
   title: string;
@@ -14,4 +16,5 @@ export type MusicDataProps = {
 export type MusicComponentProps = {
   id: string;
   title: string;
+  actions: MenuProps["actions"];
 };

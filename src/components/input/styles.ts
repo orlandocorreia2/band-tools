@@ -18,4 +18,5 @@ export const TextInput = styled.TextInput<TextInputProps>`
   height: ${({ multiline }) => (multiline ? 150 : 50)}px;
   background-color: #fff;
   flex: 1;
+  padding-left: 16px;
 `;

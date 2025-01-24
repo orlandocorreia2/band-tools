@@ -1,14 +1,15 @@
-import { SafeAreaView } from "react-native-safe-area-context";
+import React from "react";
 import { MusicComponentProps } from "../../types";
-
+import Menu from "@/src/components/menu";
 import { Container, Title } from "./styles";
 
-export default function MusicItem({ title }: MusicComponentProps) {
+export default function MusicItem({ id, title, actions }: MusicComponentProps) {
   return (
-    <SafeAreaView>
+    <>
+      <Menu id={id} actions={actions} />
       <Container>
         <Title>{title}</Title>
       </Container>
-    </SafeAreaView>
+    </>
   );
 }

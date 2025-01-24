@@ -1,6 +1,7 @@
 import { useCallback } from "react";
 import { TabBarButtonProps } from "./types";
-import { Icon, PressableStyled, Title } from "./styles";
+import { PressableStyled, Title } from "./styles";
+import { Icon } from "@/src/shared/styles";
 
 export default function DrawerButton({
   title = "",
