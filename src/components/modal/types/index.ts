@@ -3,5 +3,6 @@ export type ModalProps = {
   title?: string;
   onClose: () => void;
   onSave: () => void;
+  hideModal: () => void;
   children: React.ReactNode;
 };

@@ -1,14 +1,14 @@
 import Header from "../components/header";
 import Container from "../components/container";
 import DrawerSceneWrapper from "../components/drawer-scene-wrapper";
-import SetlistPage from "../pages/setlist";
+import SetlistsPage from "../pages/setlists";
 
-export default function SetList() {
+export default function SetLists() {
   return (
     <DrawerSceneWrapper>
-      <Header title="Setlist" />
+      <Header title="Setlists" />
       <Container>
-        <SetlistPage />
+        <SetlistsPage />
       </Container>
     </DrawerSceneWrapper>
   );

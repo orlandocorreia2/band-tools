@@ -17,6 +17,7 @@ export default function Modal({
   title = "Modal",
   onClose,
   onSave,
+  hideModal,
   children,
 }: ModalProps) {
   return (
@@ -32,7 +33,12 @@ export default function Modal({
           </ScrollView>
           <Footer>
             <Button title="Cancelar" onPress={onClose} color="red" />
-            <Button title="Salvar" onPress={onSave} color="green" />
+            <Button
+              title="Salvar"
+              onPress={onSave}
+              onPressOut={hideModal}
+              color="green"
+            />
           </Footer>
         </Containt>
       </Container>

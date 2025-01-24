@@ -5,20 +5,14 @@ import {
   Container,
   Content,
   MenuItem,
+  MenuItemContainer,
   MenuItemText,
   Separator,
 } from "./styles";
 import { Icon } from "@/src/shared/styles";
+import { MenuProps } from "./types";
 
-export type MenuProps = {
-  id: string;
-  actions: {
-    edit: (id: string) => void;
-    delete: (id: string) => void;
-  };
-};
-
-export default function Menu({ id, actions }: MenuProps) {
+export default function Menu({ id, actions, showModal }: MenuProps) {
   const { menuIdOpened, handleMenuIdOpened } = useMenu();
 
   const componentId = useMemo(() => {
@@ -30,29 +24,39 @@ export default function Menu({ id, actions }: MenuProps) {
     handleMenuIdOpened(setComponentId);
   }, [menuIdOpened]);
 
+  const handleAction = useCallback(
+    (action: (id: string) => void, actionShowModal?: boolean) => {
+      if (id) action(id);
+      if (showModal && actionShowModal) showModal();
+    },
+    [menuIdOpened]
+  );
+
   return (
     <Container onPress={toggleMenu}>
       <Icon name="more-vertical" color="#fff" />
       {componentId === menuIdOpened && (
         <Content>
-          {actions.edit != undefined && (
-            <MenuItem onPress={() => actions.edit(id)}>
-              <Icon name="edit" color="#2b77fb" fontSize={18} />
-              <MenuItemText color="#2b77fb" fontSize={18}>
-                Editar
-              </MenuItemText>
-            </MenuItem>
-          )}
-          {actions.delete != undefined && (
-            <>
-              <Separator />
-              <MenuItem onPress={() => actions.delete(id)}>
-                <Icon name="trash" color="red" fontSize={18} />
-                <MenuItemText color="red" fontSize={18}>
-                  Excluir
-                </MenuItemText>
-              </MenuItem>
-            </>
+          {actions.map(
+            ({ title, action, color, iconName, showModal }, index) => (
+              <MenuItemContainer key={`${index}-${title}`}>
+                {index > 0 && <Separator />}
+                {id && (
+                  <MenuItem
+                    onPress={() => {
+                      handleAction(action, showModal);
+                    }}
+                  >
+                    {iconName && (
+                      <Icon name="edit" color={color ?? "#000"} fontSize={18} />
+                    )}
+                    <MenuItemText color={color ?? "#000"} fontSize={18}>
+                      {title}
+                    </MenuItemText>
+                  </MenuItem>
+                )}
+              </MenuItemContainer>
+            )
           )}
         </Content>
       )}

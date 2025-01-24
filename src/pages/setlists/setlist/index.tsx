@@ -3,7 +3,7 @@ import uuid from "react-uuid";
 import { FlatList } from "react-native";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import MusicItem from "./components/music-item";
-import { getRealTime, save } from "../../infra/database/firebase";
+import { getRealTime, save } from "../../../infra/database/firebase";
 
 import { MusicDataProps } from "./types";
 
@@ -98,6 +98,18 @@ export default function SetlistPage() {
   useEffect(() => {
     init();
   }, []);
+
+  return (
+    <>
+      {data && data.length > 0 && (
+        <FlatList
+          data={data}
+          renderItem={({ item }) => <MusicItem title={item.title} />}
+          keyExtractor={(item) => item.id}
+        />
+      )}
+    </>
+  );
 
   return (
     <>

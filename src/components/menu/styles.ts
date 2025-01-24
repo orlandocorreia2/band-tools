@@ -33,6 +33,11 @@ export const Separator = styled.View`
   margin-left: -8px;
   height: 2px;
   background-color: #999;
+  margin-bottom: 12px;
+`;
+
+export const MenuItemContainer = styled.View`
+  flex: 1;
 `;
 
 type MenuItemTextProps = { color?: string; fontSize?: number };
