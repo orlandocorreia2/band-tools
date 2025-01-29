@@ -7,6 +7,7 @@ export default function ListItem({
   id,
   title,
   menu,
+  onPress = () => {},
   showModal,
 }: listItemProps) {
   return (
@@ -14,7 +15,7 @@ export default function ListItem({
       {menu && Object.keys(menu)[0] && (
         <Menu id={id} actions={menu.actions} showModal={showModal} />
       )}
-      <Container>
+      <Container onPress={onPress}>
         <Title>{title}</Title>
       </Container>
     </>

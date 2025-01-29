@@ -35,7 +35,7 @@ export default function Menu({ id, actions, showModal }: MenuProps) {
   return (
     <Container onPress={toggleMenu}>
       <Icon name="more-vertical" color="#fff" />
-      {componentId === menuIdOpened && (
+      {componentId === menuIdOpened && actions && actions.length && (
         <Content>
           {actions.map(
             ({ title, action, color, iconName, showModal }, index) => (
@@ -48,7 +48,11 @@ export default function Menu({ id, actions, showModal }: MenuProps) {
                     }}
                   >
                     {iconName && (
-                      <Icon name="edit" color={color ?? "#000"} fontSize={18} />
+                      <Icon
+                        name={iconName}
+                        color={color ?? "#000"}
+                        fontSize={18}
+                      />
                     )}
                     <MenuItemText color={color ?? "#000"} fontSize={18}>
                       {title}

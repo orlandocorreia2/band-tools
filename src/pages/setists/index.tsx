@@ -5,14 +5,14 @@ import { MusicDataProps } from "./types";
 import BtnAdd from "@/src/components/btn-add";
 import Modal from "@/src/components/modal";
 import Input from "@/src/components/input";
-import Picker from "@/src/components/picker";
 import { findAll, save } from "@/src/infra/database/firebase";
 import Loading from "@/src/components/loading";
 import { useMenu } from "@/src/contexts/menu";
 import { Info, NoContent } from "./styles";
 import ListItem from "@/src/components/list-item";
+import { router } from "expo-router";
 
-export default function RepertoirePage() {
+export default function SetlistsPage() {
   const { handleMenuIdOpened } = useMenu();
   const [refreshing, setRefreshing] = useState(false);
   const [loading, setLoading] = useState(true);
@@ -41,7 +41,7 @@ export default function RepertoirePage() {
     };
     const saveData = data && data.length ? data.concat([newMusic]) : [newMusic];
     save({
-      key: "bands/5878eab5-b7c3-4da1-89dc-02a3c1d790d7/repertoire",
+      key: "bands/5878eab5-b7c3-4da1-89dc-02a3c1d790d7/setlists",
       data: saveData,
     });
     setData(saveData);
@@ -59,7 +59,7 @@ export default function RepertoirePage() {
         return item;
       });
       save({
-        key: `bands/5878eab5-b7c3-4da1-89dc-02a3c1d790d7/repertoire/${musicIndex}`,
+        key: `bands/5878eab5-b7c3-4da1-89dc-02a3c1d790d7/setlists/${musicIndex}`,
         data: saveMusic,
       });
       return updatedData;
@@ -76,7 +76,7 @@ export default function RepertoirePage() {
     return (
       <Modal
         visible={modalVisible}
-        title="Salvar Música"
+        title="Salvar Setlist"
         onClose={closeModalAddMusic}
         onSave={handleSave}
       >
@@ -84,71 +84,6 @@ export default function RepertoirePage() {
           title="Título"
           value={music.title}
           onChangeText={(value) => setNewMusic({ ...music, title: value })}
-        />
-        <Input
-          title="Afinação"
-          value={music.tone}
-          onChangeText={(value) => setNewMusic({ ...music, tone: value })}
-        />
-        <Picker
-          title="Tonalidade"
-          selectedValue={music.tunning}
-          onValueChange={(value) => setNewMusic({ ...music, tunning: value })}
-          items={[
-            { label: "A", value: "A" },
-            { label: "A#", value: "A#" },
-            { label: "B", value: "B" },
-            { label: "C", value: "C" },
-            { label: "C#", value: "C#" },
-            { label: "D", value: "D" },
-            { label: "D#", value: "D#" },
-            { label: "E", value: "E" },
-            { label: "F", value: "F" },
-            { label: "F#", value: "F#" },
-            { label: "G", value: "G" },
-            { label: "G#", value: "G#" },
-            { label: "Bb", value: "Bb" },
-            { label: "Ab", value: "Ab" },
-            { label: "Gb", value: "Gb" },
-            { label: "Eb", value: "Eb" },
-            { label: "Db", value: "Db" },
-          ]}
-        />
-
-        <Input
-          title="BPM"
-          value={music.bpm?.toString()}
-          onChangeText={(value) => setNewMusic({ ...music, bpm: value })}
-          keyboardType="number-pad"
-        />
-        <Input
-          title="Tempo total da música em segundos"
-          value={music.totalTimeInSeconds?.toString()}
-          onChangeText={(value) =>
-            setNewMusic({ ...music, totalTimeInSeconds: value })
-          }
-          keyboardType="number-pad"
-        />
-
-        <Input
-          title="Compasso"
-          value={music.timeSignature}
-          onChangeText={(value) =>
-            setNewMusic({ ...music, timeSignature: value })
-          }
-        />
-        <Input
-          title="Letra"
-          value={music.lyrics}
-          onChangeText={(value) => setNewMusic({ ...music, lyrics: value })}
-          multiline={true}
-        />
-        <Input
-          title="Observação"
-          value={music.observation}
-          onChangeText={(value) =>
-            setNewMusic({ ...music, observation: value })
-          }
         />
       </Modal>
     );
@@ -164,7 +99,7 @@ export default function RepertoirePage() {
   );
 
   const handleDelete = useCallback((id: string) => {
-    Alert.alert("Excluir Música", "Deseja realmente exluir esta música?", [
+    Alert.alert("Excluir Setlist", "Deseja realmente exluir este setlist?", [
       {
         text: "Cancelar",
         onPress: () => handleMenuIdOpened(""),
@@ -176,7 +111,7 @@ export default function RepertoirePage() {
           setData((data) => {
             const updatedData = data.filter((item) => item.id != id);
             save({
-              key: "bands/5878eab5-b7c3-4da1-89dc-02a3c1d790d7/repertoire",
+              key: "bands/5878eab5-b7c3-4da1-89dc-02a3c1d790d7/setlists",
               data: updatedData,
             });
             return updatedData;
@@ -193,11 +128,11 @@ export default function RepertoirePage() {
 
   const init = useCallback(async () => {
     findAll({
-      key: "bands/5878eab5-b7c3-4da1-89dc-02a3c1d790d7/repertoire",
-      fn: async (repertoire: MusicDataProps[]) => {
-        if (repertoire && repertoire.length) {
+      key: "bands/5878eab5-b7c3-4da1-89dc-02a3c1d790d7/setlists",
+      fn: async (setlists: MusicDataProps[]) => {
+        if (setlists && setlists.length) {
           const saveData: MusicDataProps[] = [];
-          repertoire?.forEach((item: MusicDataProps) => {
+          setlists?.forEach((item: MusicDataProps) => {
             if (item.id) {
               saveData.push(item);
             }
@@ -207,6 +142,10 @@ export default function RepertoirePage() {
         setLoading(false);
       },
     });
+  }, []);
+
+  const handlePressItem = useCallback((index: number) => {
+    router.navigate(`/setlist/${index}`, { relativeToDirectory: true });
   }, []);
 
   useEffect(() => {
@@ -220,7 +159,7 @@ export default function RepertoirePage() {
   if (modalVisible || !data || !data.length) {
     return (
       <NoContent>
-        <Info>Nenhuma música adicionada</Info>
+        <Info>Nenhuma setlist adicionado</Info>
         <BtnAdd onPress={showModalAddMusic} />
         {modal}
       </NoContent>
@@ -234,10 +173,11 @@ export default function RepertoirePage() {
       {data && data.length > 0 && (
         <FlatList
           data={data}
-          renderItem={({ item }) => (
+          renderItem={({ item, index }) => (
             <ListItem
               id={item.id}
               title={item.title}
+              onPress={() => handlePressItem(index)}
               menu={{
                 actions: [
                   {

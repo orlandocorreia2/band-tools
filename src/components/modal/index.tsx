@@ -17,7 +17,7 @@ export default function Modal({
   title = "Modal",
   onClose,
   onSave,
-  hideModal,
+  hideModal = () => {},
   children,
 }: ModalProps) {
   return (

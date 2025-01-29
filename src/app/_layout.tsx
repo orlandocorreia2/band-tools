@@ -50,10 +50,10 @@ export default function Layout() {
             }}
           />
           <Drawer.Screen
-            key={`drawer-screen-setlist`}
-            name="setlist"
+            key={`drawer-screen-setlists`}
+            name="setlists"
             options={{
-              drawerLabel: "SetList",
+              drawerLabel: "SetLists",
               drawerIcon: ({ color }) => (
                 <Feather name="music" size={20} color={color} />
               ),

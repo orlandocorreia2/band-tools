@@ -9,12 +9,12 @@ export default function DrawerButton({
   ...rest
 }: TabBarButtonProps) {
   const renderIcon = useCallback(
-    (title: "" | "Início" | "SetList") => {
+    (title: TabBarButtonProps["title"]) => {
       if (!title) return;
       const iconNames = {
         Início: <Icon name="home" isFocused={isFocused} />,
         Agenda: <Icon name="calendar" isFocused={isFocused} />,
-        SetList: <Icon name="music" isFocused={isFocused} />,
+        SetLists: <Icon name="music" isFocused={isFocused} />,
         Repertório: <Icon name="list" isFocused={isFocused} />,
       };
       return iconNames[title];

@@ -2,7 +2,7 @@ export type ActionProps = {
   title: string;
   action: (id: string, fn?: () => void) => void;
   color?: string;
-  iconName?: string;
+  iconName?: "edit" | "trash";
   showModal?: boolean;
 };
 

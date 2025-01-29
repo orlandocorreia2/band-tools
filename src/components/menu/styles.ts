@@ -22,7 +22,7 @@ export const Content = styled.View`
 
 export const MenuItem = styled.TouchableOpacity`
   flex-direction: row;
-  justify-content: center;
+  justify-content: flex-start;
   align-items: center;
   gap: 4px;
   width: 100%;
