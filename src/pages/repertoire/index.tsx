@@ -234,10 +234,11 @@ export default function RepertoirePage() {
       {data && data.length > 0 && (
         <FlatList
           data={data}
-          renderItem={({ item }) => (
+          renderItem={({ item, index }) => (
             <ListItem
               id={item.id}
               title={item.title}
+              isLastItem={data.length - 1 === index}
               menu={{
                 actions: [
                   {

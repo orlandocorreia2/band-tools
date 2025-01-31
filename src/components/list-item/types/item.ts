@@ -6,4 +6,5 @@ export type listItemProps = {
   onPress?: () => void;
   menu?: MenuProps;
   showModal?: () => void;
+  isLastItem?: boolean;
 };

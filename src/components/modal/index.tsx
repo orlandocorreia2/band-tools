@@ -24,7 +24,7 @@ export default function Modal({
     <ModalStyled visible={visible} animationType="slide">
       <Container>
         <Containt>
-          <Close onPress={onClose}>
+          <Close onPress={onClose || hideModal}>
             <Icon name="x" color="#fff" />
           </Close>
           <Title>{title}</Title>
@@ -32,13 +32,17 @@ export default function Modal({
             <Body>{children}</Body>
           </ScrollView>
           <Footer>
-            <Button title="Cancelar" onPress={onClose} color="red" />
-            <Button
-              title="Salvar"
-              onPress={onSave}
-              onPressOut={hideModal}
-              color="green"
-            />
+            {typeof onClose == "function" && (
+              <Button title="Cancelar" onPress={onClose} color="red" />
+            )}
+            {typeof onSave == "function" && (
+              <Button
+                title="Salvar"
+                onPress={onSave}
+                onPressOut={hideModal}
+                color="green"
+              />
+            )}
           </Footer>
         </Containt>
       </Container>

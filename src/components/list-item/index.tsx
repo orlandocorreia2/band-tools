@@ -9,11 +9,17 @@ export default function ListItem({
   menu,
   onPress = () => {},
   showModal,
+  isLastItem = false,
 }: listItemProps) {
   return (
     <>
       {menu && Object.keys(menu)[0] && (
-        <Menu id={id} actions={menu.actions} showModal={showModal} />
+        <Menu
+          id={id}
+          actions={menu.actions}
+          showModal={showModal}
+          isLastItem={isLastItem}
+        />
       )}
       <Container onPress={onPress}>
         <Title>{title}</Title>

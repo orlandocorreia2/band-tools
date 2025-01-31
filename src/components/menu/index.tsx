@@ -12,8 +12,19 @@ import {
 import { Icon } from "@/src/shared/styles";
 import { MenuProps } from "./types";
 
-export default function Menu({ id, actions, showModal }: MenuProps) {
+export default function Menu({
+  id,
+  actions,
+  showModal,
+  isLastItem = false,
+}: MenuProps) {
   const { menuIdOpened, handleMenuIdOpened } = useMenu();
+
+  const styleTopValue = useMemo(() => {
+    if (!actions || actions.length < 2) return 24;
+    if (isLastItem) return -(actions.length * 30);
+    return 24;
+  }, []);
 
   const componentId = useMemo(() => {
     return uuid();
@@ -36,7 +47,7 @@ export default function Menu({ id, actions, showModal }: MenuProps) {
     <Container onPress={toggleMenu}>
       <Icon name="more-vertical" color="#fff" />
       {componentId === menuIdOpened && actions && actions.length && (
-        <Content>
+        <Content styleTopValue={styleTopValue}>
           {actions.map(
             ({ title, action, color, iconName, showModal }, index) => (
               <MenuItemContainer key={`${index}-${title}`}>

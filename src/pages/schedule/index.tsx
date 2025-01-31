@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import { FlatList } from "react-native";
 import MusicItem from "./components/music-item";
 import { MusicDataProps } from "./types";
@@ -13,12 +13,10 @@ export default function SchedulePage() {
 
   const showModalAddMusic = useCallback(() => {
     setModalVisible(true);
-    console.log("Adicionando uma data pra show");
   }, []);
 
   const closeModalAddMusic = useCallback(() => {
     setModalVisible(false);
-    console.log("dsoijdfodiif");
   }, []);
 
   const init = useCallback(async () => {}, []);

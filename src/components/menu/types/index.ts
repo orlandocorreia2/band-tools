@@ -10,4 +10,5 @@ export type MenuProps = {
   id?: string;
   actions: ActionProps[];
   showModal?: () => void;
+  isLastItem?: boolean;
 };

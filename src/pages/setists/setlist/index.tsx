@@ -1,15 +1,14 @@
 import React, { useCallback, useEffect, useMemo, useState } from "react";
-import uuid from "react-uuid";
 import { Alert, FlatList, RefreshControl } from "react-native";
 import { MusicDataProps } from "./types";
 import BtnAdd from "@/src/components/btn-add";
 import Modal from "@/src/components/modal";
-import Picker from "@/src/components/picker";
 import { findAll, save } from "@/src/infra/database/firebase";
 import Loading from "@/src/components/loading";
 import { useMenu } from "@/src/contexts/menu";
 import { Info, NoContent } from "./styles";
 import ListItem from "@/src/components/list-item";
+import { KeyTypeProps } from "@/src/types";
 
 type SetlistPageProps = {
   index: number;
@@ -21,7 +20,7 @@ export default function SetlistPage({ index }: SetlistPageProps) {
   const [loading, setLoading] = useState(true);
   const [modalVisible, setModalVisible] = useState(false);
   const [data, setData] = useState<MusicDataProps[]>([]);
-  const [music, setMusic] = useState<MusicDataProps>({} as MusicDataProps);
+  const [repertoire, setRepertoire] = useState<MusicDataProps[]>([]);
 
   const showModalAddMusic = useCallback(() => {
     setModalVisible(true);
@@ -29,96 +28,44 @@ export default function SetlistPage({ index }: SetlistPageProps) {
 
   const closeModalAddMusic = useCallback(() => {
     setModalVisible(false);
-    setMusic({} as MusicDataProps);
   }, []);
 
-  const setNewMusic = useCallback((musicItem: MusicDataProps) => {
-    setMusic(musicItem);
-  }, []);
-
-  const addMusic = useCallback(() => {
-    const newMusic = {
-      ...music,
-      id: uuid(),
-      order: data?.length ? data.length + 1 : 1,
-    };
-    const saveData = data && data.length ? data.concat([newMusic]) : [newMusic];
-    save({
-      key: `bands/5878eab5-b7c3-4da1-89dc-02a3c1d790d7/setlists/${index}`,
-      data: saveData,
-    });
-    setData(saveData);
-  }, [data, music]);
-
-  const updateMusic = useCallback(() => {
-    setData((data) => {
-      const saveMusic = { ...music, order: data?.length ? data.length + 1 : 1 };
-      let musicIndex = 0;
-      const updatedData = data.map((item, index) => {
-        if (item.id == music.id) {
-          musicIndex = index;
-          return saveMusic;
+  const handleAddMusic = useCallback((item: MusicDataProps) => {
+    setRepertoire((dataRepertoire) => {
+      const response = dataRepertoire.filter((i) => i.id !== item.id);
+      if (response.length === 0) setModalVisible(false);
+      setData((data) => {
+        if (!data.find((dataItem) => dataItem.id === item.id)) {
+          data.push({ ...item, order: data.length + 1 });
+          save({
+            key: `bands/5878eab5-b7c3-4da1-89dc-02a3c1d790d7/setlists/${index}/musics`,
+            data,
+          });
         }
-        return item;
+        return data;
       });
-      save({
-        key: `bands/5878eab5-b7c3-4da1-89dc-02a3c1d790d7/setlists/${index}`,
-        data: saveMusic,
-      });
-      return updatedData;
+      return response;
     });
-  }, [music]);
-
-  const handleSave = useCallback(() => {
-    music.id ? updateMusic() : addMusic();
-    setMusic({} as MusicDataProps);
-    setModalVisible(false);
-  }, [music]);
+  }, []);
 
   const modal = useMemo(() => {
     return (
       <Modal
         visible={modalVisible}
-        title="Salvar Música"
-        onClose={closeModalAddMusic}
-        onSave={handleSave}
+        title="Adicionar Música"
+        hideModal={closeModalAddMusic}
       >
-        <Picker
-          title="Selecione a música do repertório."
-          selectedValue={music.tunning}
-          onValueChange={(value) => setNewMusic({ ...music, tunning: value })}
-          items={[
-            { label: "A", value: "A" },
-            { label: "A#", value: "A#" },
-            { label: "B", value: "B" },
-            { label: "C", value: "C" },
-            { label: "C#", value: "C#" },
-            { label: "D", value: "D" },
-            { label: "D#", value: "D#" },
-            { label: "E", value: "E" },
-            { label: "F", value: "F" },
-            { label: "F#", value: "F#" },
-            { label: "G", value: "G" },
-            { label: "G#", value: "G#" },
-            { label: "Bb", value: "Bb" },
-            { label: "Ab", value: "Ab" },
-            { label: "Gb", value: "Gb" },
-            { label: "Eb", value: "Eb" },
-            { label: "Db", value: "Db" },
-          ]}
-        />
+        {repertoire.map((item) => (
+          <ListItem
+            key={item.id}
+            id={item.id}
+            title={item.title}
+            onPress={() => handleAddMusic(item)}
+          />
+        ))}
       </Modal>
     );
-  }, [modalVisible, music]);
-
-  const handleEdit = useCallback(
-    (id: string) => {
-      const indexMusic = data.findIndex((item) => item.id == id);
-      setMusic(data[indexMusic]);
-      setModalVisible(true);
-    },
-    [data]
-  );
+  }, [modalVisible, repertoire]);
 
   const handleDelete = useCallback((id: string) => {
     Alert.alert(
@@ -134,11 +81,17 @@ export default function SetlistPage({ index }: SetlistPageProps) {
           text: "Sim",
           onPress: () =>
             setData((data) => {
-              const updatedData = data.filter((item) => item.id != id);
+              const itemExclude = data.find((item) => item.id === id);
+              const updatedData = data.filter((item) => item.id !== id);
               save({
-                key: `bands/5878eab5-b7c3-4da1-89dc-02a3c1d790d7/setlists/${index}`,
+                key: `bands/5878eab5-b7c3-4da1-89dc-02a3c1d790d7/setlists/${index}/musics`,
                 data: updatedData,
               });
+              if (itemExclude) {
+                setRepertoire((dataRepertoire) => {
+                  return dataRepertoire.concat([itemExclude]);
+                });
+              }
               return updatedData;
             }),
         },
@@ -152,20 +105,45 @@ export default function SetlistPage({ index }: SetlistPageProps) {
     setRefreshing(false);
   }, []);
 
+  const getRepertoire = useCallback(
+    (savedData: MusicDataProps[]) => {
+      const savedDataKeys: KeyTypeProps = {};
+      savedData.forEach((item) => {
+        savedDataKeys[item.id] = true;
+      });
+      findAll({
+        key: `bands/5878eab5-b7c3-4da1-89dc-02a3c1d790d7/repertoire`,
+        fn: async (musics: MusicDataProps[]) => {
+          const saveData: MusicDataProps[] = [];
+          if (musics && musics.length) {
+            musics.forEach((item: MusicDataProps) => {
+              if (item.id && !savedDataKeys[item.id]) {
+                saveData.push(item);
+              }
+            });
+          }
+          setRepertoire(saveData);
+          setLoading(false);
+        },
+      });
+    },
+    [data]
+  );
+
   const init = useCallback(async () => {
     findAll({
-      key: `bands/5878eab5-b7c3-4da1-89dc-02a3c1d790d7/setlists/${index}`,
+      key: `bands/5878eab5-b7c3-4da1-89dc-02a3c1d790d7/setlists/${index}/musics`,
       fn: async (musics: MusicDataProps[]) => {
+        const savedData: MusicDataProps[] = [];
         if (musics && musics.length) {
-          const saveData: MusicDataProps[] = [];
           musics?.forEach((item: MusicDataProps) => {
             if (item.id) {
-              saveData.push(item);
+              savedData.push(item);
             }
           });
-          setData(saveData);
+          setData(savedData);
         }
-        setLoading(false);
+        getRepertoire(savedData);
       },
     });
   }, []);
@@ -182,7 +160,7 @@ export default function SetlistPage({ index }: SetlistPageProps) {
     return (
       <NoContent>
         <Info>Nenhuma música adicionada no setlist</Info>
-        <BtnAdd onPress={showModalAddMusic} />
+        {repertoire.length > 0 && <BtnAdd onPress={showModalAddMusic} />}
         {modal}
       </NoContent>
     );
@@ -190,7 +168,7 @@ export default function SetlistPage({ index }: SetlistPageProps) {
 
   return (
     <>
-      <BtnAdd onPress={showModalAddMusic} />
+      {repertoire.length > 0 && <BtnAdd onPress={showModalAddMusic} />}
       {modal}
       {data && data.length > 0 && (
         <FlatList
@@ -201,12 +179,6 @@ export default function SetlistPage({ index }: SetlistPageProps) {
               title={item.title}
               menu={{
                 actions: [
-                  {
-                    title: "Editar",
-                    action: () => handleEdit(item.id),
-                    color: "#000",
-                    iconName: "edit",
-                  },
                   {
                     title: "Excluir",
                     action: () => handleDelete(item.id),
