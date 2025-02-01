@@ -9,12 +9,13 @@ import { useMenu } from "@/src/contexts/menu";
 import { Info, NoContent } from "./styles";
 import ListItem from "@/src/components/list-item";
 import { KeyTypeProps } from "@/src/types";
+import { router } from "expo-router";
 
 type SetlistPageProps = {
-  index: number;
+  setlistId: string;
 };
 
-export default function SetlistPage({ index }: SetlistPageProps) {
+export default function SetlistPage({ setlistId }: SetlistPageProps) {
   const { handleMenuIdOpened } = useMenu();
   const [refreshing, setRefreshing] = useState(false);
   const [loading, setLoading] = useState(true);
@@ -23,30 +24,77 @@ export default function SetlistPage({ index }: SetlistPageProps) {
   const [repertoire, setRepertoire] = useState<MusicDataProps[]>([]);
 
   const showModalAddMusic = useCallback(() => {
+    if (!repertoire || !repertoire.length) {
+      Alert.alert(
+        "Adicionar Música",
+        "Não há mais músicas para adicionar no setilist. Deseja acessar a página do repertório para incluir mais músicas?",
+        [
+          {
+            text: "Cancelar",
+            style: "cancel",
+          },
+          {
+            text: "Sim",
+            onPress: () => {
+              router.navigate("/repertoire");
+            },
+          },
+        ]
+      );
+      return;
+    }
     setModalVisible(true);
-  }, []);
+  }, [repertoire]);
 
   const closeModalAddMusic = useCallback(() => {
     setModalVisible(false);
   }, []);
 
-  const handleAddMusic = useCallback((item: MusicDataProps) => {
-    setRepertoire((dataRepertoire) => {
-      const response = dataRepertoire.filter((i) => i.id !== item.id);
+  const handleAddMusic = useCallback(
+    (item: MusicDataProps) => {
+      const response = repertoire.filter((i) => i.id !== item.id);
       if (response.length === 0) setModalVisible(false);
-      setData((data) => {
-        if (!data.find((dataItem) => dataItem.id === item.id)) {
-          data.push({ ...item, order: data.length + 1 });
-          save({
-            key: `bands/5878eab5-b7c3-4da1-89dc-02a3c1d790d7/setlists/${index}/musics`,
-            data,
-          });
-        }
-        return data;
-      });
-      return response;
-    });
-  }, []);
+      if (!data.find((dataItem) => dataItem.id === item.id)) {
+        save({
+          key: `bands/5878eab5-b7c3-4da1-89dc-02a3c1d790d7/setlists/${setlistId}/musics/${item.id}`,
+          data: { ...item, order: data.length + 1 },
+        });
+      }
+      init();
+    },
+    [repertoire, data, setlistId]
+  );
+
+  const handleDelete = useCallback(
+    (id: string) => {
+      Alert.alert(
+        "Excluir Música",
+        "Deseja realmente exluir esta música do setlist?",
+        [
+          {
+            text: "Cancelar",
+            onPress: () => handleMenuIdOpened(""),
+            style: "cancel",
+          },
+          {
+            text: "Sim",
+            onPress: () => {
+              const itemExclude = data.find((item) => item.id === id);
+              if (itemExclude) {
+                save({
+                  key: `bands/5878eab5-b7c3-4da1-89dc-02a3c1d790d7/setlists/${setlistId}/musics/${itemExclude.id}`,
+                  data: null,
+                });
+              }
+              init();
+              handleMenuIdOpened("");
+            },
+          },
+        ]
+      );
+    },
+    [data, setlistId]
+  );
 
   const modal = useMemo(() => {
     return (
@@ -67,85 +115,43 @@ export default function SetlistPage({ index }: SetlistPageProps) {
     );
   }, [modalVisible, repertoire]);
 
-  const handleDelete = useCallback((id: string) => {
-    Alert.alert(
-      "Excluir Música",
-      "Deseja realmente exluir esta música do setlist?",
-      [
-        {
-          text: "Cancelar",
-          onPress: () => handleMenuIdOpened(""),
-          style: "cancel",
-        },
-        {
-          text: "Sim",
-          onPress: () =>
-            setData((data) => {
-              const itemExclude = data.find((item) => item.id === id);
-              const updatedData = data.filter((item) => item.id !== id);
-              save({
-                key: `bands/5878eab5-b7c3-4da1-89dc-02a3c1d790d7/setlists/${index}/musics`,
-                data: updatedData,
-              });
-              if (itemExclude) {
-                setRepertoire((dataRepertoire) => {
-                  return dataRepertoire.concat([itemExclude]);
-                });
-              }
-              return updatedData;
-            }),
-        },
-      ]
-    );
+  const getRepertoire = useCallback((savedData: MusicDataProps[]) => {
+    const savedDataKeys: KeyTypeProps = {};
+    savedData.forEach((item) => {
+      savedDataKeys[item.id] = true;
+    });
+
+    findAll({
+      key: `bands/5878eab5-b7c3-4da1-89dc-02a3c1d790d7/repertoire`,
+      fn: async (musics: MusicDataProps[]) => {
+        const saveData: MusicDataProps[] = [];
+        musics.forEach((item: MusicDataProps) => {
+          if (!savedDataKeys[item.id]) saveData.push(item);
+        });
+        setRepertoire(saveData);
+        setLoading(false);
+      },
+    });
   }, []);
+
+  const init = useCallback(async () => {
+    findAll({
+      key: `bands/5878eab5-b7c3-4da1-89dc-02a3c1d790d7/setlists/${setlistId}/musics`,
+      fn: async (musics: MusicDataProps[]) => {
+        const savedData: MusicDataProps[] = [];
+        musics.forEach((item: MusicDataProps) => {
+          savedData.push(item);
+        });
+        setData(savedData);
+        getRepertoire(savedData);
+      },
+    });
+  }, [setlistId]);
 
   const onRefresh = useCallback(async () => {
     setRefreshing(true);
     await init();
     setRefreshing(false);
-  }, []);
-
-  const getRepertoire = useCallback(
-    (savedData: MusicDataProps[]) => {
-      const savedDataKeys: KeyTypeProps = {};
-      savedData.forEach((item) => {
-        savedDataKeys[item.id] = true;
-      });
-      findAll({
-        key: `bands/5878eab5-b7c3-4da1-89dc-02a3c1d790d7/repertoire`,
-        fn: async (musics: MusicDataProps[]) => {
-          const saveData: MusicDataProps[] = [];
-          if (musics && musics.length) {
-            musics.forEach((item: MusicDataProps) => {
-              if (item.id && !savedDataKeys[item.id]) {
-                saveData.push(item);
-              }
-            });
-          }
-          setRepertoire(saveData);
-          setLoading(false);
-        },
-      });
-    },
-    [data]
-  );
-
-  const init = useCallback(async () => {
-    findAll({
-      key: `bands/5878eab5-b7c3-4da1-89dc-02a3c1d790d7/setlists/${index}/musics`,
-      fn: async (musics: MusicDataProps[]) => {
-        const savedData: MusicDataProps[] = [];
-        if (musics && musics.length) {
-          musics?.forEach((item: MusicDataProps) => {
-            if (item.id) {
-              savedData.push(item);
-            }
-          });
-          setData(savedData);
-        }
-        getRepertoire(savedData);
-      },
-    });
   }, []);
 
   useEffect(() => {
@@ -160,7 +166,7 @@ export default function SetlistPage({ index }: SetlistPageProps) {
     return (
       <NoContent>
         <Info>Nenhuma música adicionada no setlist</Info>
-        {repertoire.length > 0 && <BtnAdd onPress={showModalAddMusic} />}
+        <BtnAdd onPress={showModalAddMusic} />
         {modal}
       </NoContent>
     );
@@ -168,15 +174,16 @@ export default function SetlistPage({ index }: SetlistPageProps) {
 
   return (
     <>
-      {repertoire.length > 0 && <BtnAdd onPress={showModalAddMusic} />}
+      <BtnAdd onPress={showModalAddMusic} />
       {modal}
       {data && data.length > 0 && (
         <FlatList
           data={data}
-          renderItem={({ item }) => (
+          renderItem={({ item, index }) => (
             <ListItem
               id={item.id}
               title={item.title}
+              isLastItem={data.length > 1 && data.length - 1 === index}
               menu={{
                 actions: [
                   {

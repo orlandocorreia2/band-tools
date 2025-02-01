@@ -1,20 +1,24 @@
-import React, { useEffect, useMemo } from "react";
+import React from "react";
 import Header from "../../components/header";
 import Container from "../../components/container";
 import SetlistPage from "../../pages/setists/setlist";
 import { useLocalSearchParams } from "expo-router/build/hooks";
-import { Alert } from "react-native";
+import Loading from "@/src/components/loading";
 
 export default function SetLists() {
-  const { index } = useLocalSearchParams();
-  const indexValue = useMemo(() => {
-    return typeof index === "string" ? parseInt(index) : parseInt(index[0]);
-  }, []);
+  const { setlistId } = useLocalSearchParams();
+
+  if (!setlistId) {
+    return <Loading />;
+  }
+
   return (
     <>
       <Header title="Setlist" />
       <Container>
-        <SetlistPage index={indexValue} />
+        <SetlistPage
+          setlistId={typeof setlistId === "string" ? setlistId : setlistId[0]}
+        />
       </Container>
     </>
   );

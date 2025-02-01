@@ -1,12 +1,11 @@
 import React, { useCallback, useEffect, useMemo, useState } from "react";
-import uuid from "react-uuid";
 import { Alert, FlatList, RefreshControl } from "react-native";
 import { MusicDataProps } from "./types";
 import BtnAdd from "@/src/components/btn-add";
 import Modal from "@/src/components/modal";
 import Input from "@/src/components/input";
 import Picker from "@/src/components/picker";
-import { findAll, save } from "@/src/infra/database/firebase";
+import { add, findAll, save } from "@/src/infra/database/firebase";
 import Loading from "@/src/components/loading";
 import { useMenu } from "@/src/contexts/menu";
 import { Info, NoContent } from "./styles";
@@ -33,44 +32,66 @@ export default function RepertoirePage() {
     setMusic(musicItem);
   }, []);
 
-  const addMusic = useCallback(() => {
-    const newMusic = {
-      ...music,
-      id: uuid(),
-      order: data?.length ? data.length + 1 : 1,
-    };
-    const saveData = data && data.length ? data.concat([newMusic]) : [newMusic];
-    save({
-      key: "bands/5878eab5-b7c3-4da1-89dc-02a3c1d790d7/repertoire",
-      data: saveData,
-    });
-    setData(saveData);
-  }, [data, music]);
-
-  const updateMusic = useCallback(() => {
-    setData((data) => {
-      const saveMusic = { ...music, order: data?.length ? data.length + 1 : 1 };
-      let musicIndex = 0;
-      const updatedData = data.map((item, index) => {
-        if (item.id == music.id) {
-          musicIndex = index;
-          return saveMusic;
-        }
-        return item;
-      });
-      save({
-        key: `bands/5878eab5-b7c3-4da1-89dc-02a3c1d790d7/repertoire/${musicIndex}`,
-        data: saveMusic,
-      });
-      return updatedData;
-    });
-  }, [music]);
+  const handleEdit = useCallback(
+    (id: string) => {
+      const indexMusic = data.findIndex((item) => item.id == id);
+      setMusic(data[indexMusic]);
+      setModalVisible(true);
+    },
+    [data]
+  );
 
   const handleSave = useCallback(() => {
     music.id ? updateMusic() : addMusic();
     setMusic({} as MusicDataProps);
     setModalVisible(false);
   }, [music]);
+
+  const addMusic = useCallback(() => {
+    add({
+      key: "bands/5878eab5-b7c3-4da1-89dc-02a3c1d790d7/repertoire",
+      data: {
+        ...music,
+        order: data?.length ? data.length + 1 : 1,
+      },
+    });
+    init();
+  }, [data, music]);
+
+  const updateMusic = useCallback(() => {
+    save({
+      key: `bands/5878eab5-b7c3-4da1-89dc-02a3c1d790d7/repertoire/${music.id}`,
+      data: music,
+    });
+    init();
+  }, [music]);
+
+  const handleDelete = useCallback(
+    (id: string) => {
+      Alert.alert("Excluir Música", "Deseja realmente exluir esta música?", [
+        {
+          text: "Cancelar",
+          onPress: () => handleMenuIdOpened(""),
+          style: "cancel",
+        },
+        {
+          text: "Sim",
+          onPress: () => {
+            const deleteData = data.find((item) => item.id === id);
+            if (deleteData) {
+              save({
+                key: `bands/5878eab5-b7c3-4da1-89dc-02a3c1d790d7/repertoire/${deleteData.id}`,
+                data: null,
+              });
+            }
+            handleMenuIdOpened("");
+            init();
+          },
+        },
+      ]);
+    },
+    [data]
+  );
 
   const modal = useMemo(() => {
     return (
@@ -154,37 +175,6 @@ export default function RepertoirePage() {
     );
   }, [modalVisible, music]);
 
-  const handleEdit = useCallback(
-    (id: string) => {
-      const indexMusic = data.findIndex((item) => item.id == id);
-      setMusic(data[indexMusic]);
-      setModalVisible(true);
-    },
-    [data]
-  );
-
-  const handleDelete = useCallback((id: string) => {
-    Alert.alert("Excluir Música", "Deseja realmente exluir esta música?", [
-      {
-        text: "Cancelar",
-        onPress: () => handleMenuIdOpened(""),
-        style: "cancel",
-      },
-      {
-        text: "Sim",
-        onPress: () =>
-          setData((data) => {
-            const updatedData = data.filter((item) => item.id != id);
-            save({
-              key: "bands/5878eab5-b7c3-4da1-89dc-02a3c1d790d7/repertoire",
-              data: updatedData,
-            });
-            return updatedData;
-          }),
-      },
-    ]);
-  }, []);
-
   const onRefresh = useCallback(async () => {
     setRefreshing(true);
     await init();
@@ -195,15 +185,11 @@ export default function RepertoirePage() {
     findAll({
       key: "bands/5878eab5-b7c3-4da1-89dc-02a3c1d790d7/repertoire",
       fn: async (repertoire: MusicDataProps[]) => {
-        if (repertoire && repertoire.length) {
-          const saveData: MusicDataProps[] = [];
-          repertoire?.forEach((item: MusicDataProps) => {
-            if (item.id) {
-              saveData.push(item);
-            }
-          });
-          setData(saveData);
-        }
+        const saveData: MusicDataProps[] = [];
+        repertoire.forEach((item: MusicDataProps) => {
+          saveData.push(item);
+        });
+        setData(saveData);
         setLoading(false);
       },
     });
@@ -238,7 +224,7 @@ export default function RepertoirePage() {
             <ListItem
               id={item.id}
               title={item.title}
-              isLastItem={data.length - 1 === index}
+              isLastItem={data.length > 1 && data.length - 1 === index}
               menu={{
                 actions: [
                   {

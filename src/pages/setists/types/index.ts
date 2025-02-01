@@ -1,16 +1,11 @@
 import { MenuProps } from "@/src/components/menu/types";
+import { MusicDataProps } from "../setlist/types";
 
-export type MusicDataProps = {
-  id: string;
+export type SetlistDataProps = {
+  id: any;
   title: string;
-  tone: string;
-  tunning: string;
-  bpm: number;
-  totalTimeInSeconds: number;
-  timeSignature: string;
-  lyrics: string;
-  observation: string;
   order: number;
+  musics?: MusicDataProps[];
 };
 
 export type MusicComponentProps = {
