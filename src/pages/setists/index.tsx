@@ -8,7 +8,7 @@ import Loading from "@/src/components/loading";
 import { useMenu } from "@/src/contexts/menu";
 import { Info, NoContent } from "./styles";
 import ListItem from "@/src/components/list-item";
-import { router } from "expo-router";
+import { router, useFocusEffect } from "expo-router";
 import { SetlistDataProps } from "./types";
 
 export default function SetlistsPage() {
@@ -137,6 +137,10 @@ export default function SetlistsPage() {
     await init();
     setRefreshing(false);
   }, []);
+
+  useFocusEffect(() => {
+    init();
+  });
 
   useEffect(() => {
     init();

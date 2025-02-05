@@ -1,12 +1,17 @@
 import styled from "styled-components/native";
 
-export const Container = styled.TouchableOpacity`
+type ContainerProps = {
+  isActive: boolean;
+};
+
+export const Container = styled.TouchableOpacity<ContainerProps>`
   background: rgba(32, 33, 36, 1);
   width: 100%;
   padding: 16px;
   align-items: center;
   border-radius: 16px;
   margin-bottom: 12px;
+  box-shadow: 10px 5px 5px black;
 `;
 
 export const Title = styled.Text`

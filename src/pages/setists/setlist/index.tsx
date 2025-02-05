@@ -1,21 +1,38 @@
-import React, { useCallback, useEffect, useMemo, useState } from "react";
-import { Alert, FlatList, RefreshControl } from "react-native";
+import React, {
+  useCallback,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+} from "react";
+import { Alert, RefreshControl } from "react-native";
 import { MusicDataProps } from "./types";
 import BtnAdd from "@/src/components/btn-add";
 import Modal from "@/src/components/modal";
 import { findAll, save } from "@/src/infra/database/firebase";
 import Loading from "@/src/components/loading";
 import { useMenu } from "@/src/contexts/menu";
-import { Info, NoContent } from "./styles";
 import ListItem from "@/src/components/list-item";
 import { KeyTypeProps } from "@/src/types";
-import { router } from "expo-router";
+import { router, useFocusEffect } from "expo-router";
+import { GestureHandlerRootView } from "react-native-gesture-handler";
+import DraggableFlatList, {
+  ScaleDecorator,
+  ShadowDecorator,
+  OpacityDecorator,
+  useOnCellActiveAnimation,
+} from "react-native-draggable-flatlist";
+
+import { Info, NoContent } from "./styles";
+import { useIsFocused } from "@react-navigation/native";
 
 type SetlistPageProps = {
   setlistId: string;
 };
 
 export default function SetlistPage({ setlistId }: SetlistPageProps) {
+  const ref = useRef(null);
+
   const { handleMenuIdOpened } = useMenu();
   const [refreshing, setRefreshing] = useState(false);
   const [loading, setLoading] = useState(true);
@@ -57,7 +74,7 @@ export default function SetlistPage({ setlistId }: SetlistPageProps) {
       if (!data.find((dataItem) => dataItem.id === item.id)) {
         save({
           key: `bands/5878eab5-b7c3-4da1-89dc-02a3c1d790d7/setlists/${setlistId}/musics/${item.id}`,
-          data: { ...item, order: data.length + 1 },
+          data: item,
         });
       }
       init();
@@ -95,6 +112,54 @@ export default function SetlistPage({ setlistId }: SetlistPageProps) {
     },
     [data, setlistId]
   );
+
+  const handleDragEnd = useCallback(
+    async (drag: { data: MusicDataProps[] }) => {
+      setData(drag.data);
+      save({
+        key: `bands/5878eab5-b7c3-4da1-89dc-02a3c1d790d7/setlists/${setlistId}/musics`,
+        data: drag.data,
+      });
+    },
+    []
+  );
+
+  const renderItem = ({
+    item,
+    drag,
+  }: {
+    item: MusicDataProps;
+    drag: () => void;
+  }) => {
+    const { isActive } = useOnCellActiveAnimation();
+    const isLastItem = false;
+
+    return (
+      <ScaleDecorator>
+        <OpacityDecorator activeOpacity={0.5}>
+          <ShadowDecorator>
+            <ListItem
+              id={item.id}
+              title={item.title}
+              isLastItem={isLastItem}
+              isActive={isActive}
+              onLongPress={drag}
+              menu={{
+                actions: [
+                  {
+                    title: "Excluir",
+                    action: () => handleDelete(item.id),
+                    color: "#000",
+                    iconName: "trash",
+                  },
+                ],
+              }}
+            />
+          </ShadowDecorator>
+        </OpacityDecorator>
+      </ScaleDecorator>
+    );
+  };
 
   const modal = useMemo(() => {
     return (
@@ -154,6 +219,19 @@ export default function SetlistPage({ setlistId }: SetlistPageProps) {
     setRefreshing(false);
   }, []);
 
+  useFocusEffect(
+    useCallback(() => {
+      setData((data) => {
+        if (!data.length) init();
+      });
+
+      return () => {
+        Alert.alert("Perdeu o foco e vai limpar os dados");
+        setData([]);
+      };
+    }, [])
+  );
+
   useEffect(() => {
     init();
   }, []);
@@ -173,35 +251,21 @@ export default function SetlistPage({ setlistId }: SetlistPageProps) {
   }
 
   return (
-    <>
+    <GestureHandlerRootView>
       <BtnAdd onPress={showModalAddMusic} />
       {modal}
       {data && data.length > 0 && (
-        <FlatList
+        <DraggableFlatList
+          ref={ref}
           data={data}
-          renderItem={({ item, index }) => (
-            <ListItem
-              id={item.id}
-              title={item.title}
-              isLastItem={data.length > 1 && data.length - 1 === index}
-              menu={{
-                actions: [
-                  {
-                    title: "Excluir",
-                    action: () => handleDelete(item.id),
-                    color: "#000",
-                    iconName: "trash",
-                  },
-                ],
-              }}
-            />
-          )}
+          renderItem={renderItem}
           keyExtractor={(item) => item.id}
+          onDragEnd={handleDragEnd}
           refreshControl={
             <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
           }
         />
       )}
-    </>
+    </GestureHandlerRootView>
   );
 }

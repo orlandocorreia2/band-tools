@@ -8,6 +8,7 @@ export const Container = styled.TouchableOpacity`
   height: 85%;
   width: 32px;
   z-index: 1;
+  top: 50%;
 `;
 
 type ContentProps = {

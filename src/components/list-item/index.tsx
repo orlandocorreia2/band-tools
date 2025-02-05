@@ -8,11 +8,14 @@ export default function ListItem({
   title,
   menu,
   onPress = () => {},
+  onLongPress = () => {},
   showModal,
   isLastItem = false,
+  isActive = false,
 }: listItemProps) {
   return (
-    <>
+    <Container onLongPress={onLongPress} onPress={onPress} isActive={isActive}>
+      <Title>{title}</Title>
       {menu && Object.keys(menu)[0] && (
         <Menu
           id={id}
@@ -21,9 +24,6 @@ export default function ListItem({
           isLastItem={isLastItem}
         />
       )}
-      <Container onPress={onPress}>
-        <Title>{title}</Title>
-      </Container>
-    </>
+    </Container>
   );
 }
