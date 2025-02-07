@@ -22,13 +22,14 @@ import DraggableFlatList, {
 } from "react-native-draggable-flatlist";
 
 import { Info, NoContent } from "./styles";
-import { KeyTypeProps } from "@/src/types";
 
 type SetlistPageProps = {
   setlistId: string;
 };
 
 export default function SetlistPage({ setlistId }: SetlistPageProps) {
+  let countItems = 0;
+
   const ref = useRef(null);
 
   const { handleMenuIdOpened } = useMenu();
@@ -142,8 +143,8 @@ export default function SetlistPage({ setlistId }: SetlistPageProps) {
   const renderItem = useCallback(
     ({ item, drag }: { item: MusicDataProps; drag: () => void }) => {
       const { isActive } = useOnCellActiveAnimation();
-      const zIndexByData =
-        data.length - data.findIndex((i: MusicDataProps) => i.id === item.id);
+      const zIndexByData = data.length - countItems;
+      countItems++;
 
       return (
         <ScaleDecorator>

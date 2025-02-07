@@ -14,6 +14,7 @@ export const Container = styled.TouchableOpacity<ContainerProps>`
   margin-bottom: 12px;
   box-shadow: 10px 5px 5px black;
   z-index: ${({ zIndex }) => zIndex};
+  elevation: ${({ zIndex }) => zIndex};
 `;
 
 export const Title = styled.Text`

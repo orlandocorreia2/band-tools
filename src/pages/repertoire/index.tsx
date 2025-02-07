@@ -12,6 +12,8 @@ import { Info, NoContent } from "./styles";
 import ListItem from "@/src/components/list-item";
 
 export default function RepertoirePage() {
+  let countItems = 0;
+
   const { handleMenuIdOpened } = useMenu();
   const [refreshing, setRefreshing] = useState(false);
   const [loading, setLoading] = useState(true);
@@ -58,32 +60,36 @@ export default function RepertoirePage() {
     init();
   }, [data, music]);
 
-  const renderItem = useCallback(({ item }: { item: MusicDataProps }) => {
-    const zIndexByData = data.length - data.findIndex((i) => i.id === item.id);
-    return (
-      <ListItem
-        id={item.id}
-        title={item.title}
-        zIndex={zIndexByData}
-        menu={{
-          actions: [
-            {
-              title: "Editar",
-              action: () => handleEdit(item.id),
-              color: "#000",
-              iconName: "edit",
-            },
-            {
-              title: "Excluir",
-              action: () => handleDelete(item.id),
-              color: "#000",
-              iconName: "trash",
-            },
-          ],
-        }}
-      />
-    );
-  }, []);
+  const renderItem = useCallback(
+    ({ item }: { item: MusicDataProps }) => {
+      const zIndexByData = data.length - countItems;
+      countItems++;
+      return (
+        <ListItem
+          id={item.id}
+          title={item.title}
+          zIndex={zIndexByData}
+          menu={{
+            actions: [
+              {
+                title: "Editar",
+                action: () => handleEdit(item.id),
+                color: "#000",
+                iconName: "edit",
+              },
+              {
+                title: "Excluir",
+                action: () => handleDelete(item.id),
+                color: "#000",
+                iconName: "trash",
+              },
+            ],
+          }}
+        />
+      );
+    },
+    [data]
+  );
 
   const updateMusic = useCallback(() => {
     save({

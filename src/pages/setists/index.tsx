@@ -12,6 +12,8 @@ import { router, useFocusEffect } from "expo-router";
 import { SetlistDataProps } from "./types";
 
 export default function SetlistsPage() {
+  let countItems = 0;
+
   const { handleMenuIdOpened } = useMenu();
   const [refreshing, setRefreshing] = useState(false);
   const [loading, setLoading] = useState(true);
@@ -131,8 +133,8 @@ export default function SetlistsPage() {
 
   const renderItem = useCallback(
     ({ item }: { item: SetlistDataProps; index: number }) => {
-      const zIndexByData =
-        data.length - data.findIndex((i) => i.id === item.id);
+      const zIndexByData = data.length - countItems;
+      countItems++;
       return (
         <ListItem
           id={item.id}
