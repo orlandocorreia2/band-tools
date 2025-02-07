@@ -9,13 +9,11 @@ import { Alert, RefreshControl } from "react-native";
 import { MusicDataProps } from "./types";
 import BtnAdd from "@/src/components/btn-add";
 import Modal from "@/src/components/modal";
-import { findAll, save } from "@/src/infra/database/firebase";
+import { findAll, getRealTime, save } from "@/src/infra/database/firebase";
 import Loading from "@/src/components/loading";
 import { useMenu } from "@/src/contexts/menu";
 import ListItem from "@/src/components/list-item";
-import { KeyTypeProps } from "@/src/types";
-import { router, useFocusEffect } from "expo-router";
-import { GestureHandlerRootView } from "react-native-gesture-handler";
+import { router } from "expo-router";
 import DraggableFlatList, {
   ScaleDecorator,
   ShadowDecorator,
@@ -24,7 +22,7 @@ import DraggableFlatList, {
 } from "react-native-draggable-flatlist";
 
 import { Info, NoContent } from "./styles";
-import { useIsFocused } from "@react-navigation/native";
+import { KeyTypeProps } from "@/src/types";
 
 type SetlistPageProps = {
   setlistId: string;
@@ -41,7 +39,10 @@ export default function SetlistPage({ setlistId }: SetlistPageProps) {
   const [repertoire, setRepertoire] = useState<MusicDataProps[]>([]);
 
   const showModalAddMusic = useCallback(() => {
-    if (!repertoire || !repertoire.length) {
+    if (
+      !repertoireWithoutAddedSetlist ||
+      !repertoireWithoutAddedSetlist.length
+    ) {
       Alert.alert(
         "Adicionar Música",
         "Não há mais músicas para adicionar no setilist. Deseja acessar a página do repertório para incluir mais músicas?",
@@ -61,7 +62,7 @@ export default function SetlistPage({ setlistId }: SetlistPageProps) {
       return;
     }
     setModalVisible(true);
-  }, [repertoire]);
+  }, [repertoireWithoutAddedSetlist]);
 
   const closeModalAddMusic = useCallback(() => {
     setModalVisible(false);
@@ -71,16 +72,30 @@ export default function SetlistPage({ setlistId }: SetlistPageProps) {
     (item: MusicDataProps) => {
       const response = repertoire.filter((i) => i.id !== item.id);
       if (response.length === 0) setModalVisible(false);
-      if (!data.find((dataItem) => dataItem.id === item.id)) {
+      if (
+        !data ||
+        !data.length ||
+        !data.find((dataItem) => dataItem.id === item.id)
+      ) {
         save({
-          key: `bands/5878eab5-b7c3-4da1-89dc-02a3c1d790d7/setlists/${setlistId}/musics/${item.id}`,
-          data: item,
+          key: `bands/5878eab5-b7c3-4da1-89dc-02a3c1d790d7/setlists/${setlistId}/musics`,
+          data: data.concat(item),
         });
       }
       init();
     },
     [repertoire, data, setlistId]
   );
+
+  const repertoireWithoutAddedSetlist = useMemo(() => {
+    const response: MusicDataProps[] = [];
+    repertoire.forEach((repertoireItem) => {
+      if (!data.find((dataItem) => dataItem.id === repertoireItem.id)) {
+        response.push(repertoireItem);
+      }
+    });
+    return response;
+  }, [repertoire, data]);
 
   const handleDelete = useCallback(
     (id: string) => {
@@ -124,42 +139,40 @@ export default function SetlistPage({ setlistId }: SetlistPageProps) {
     []
   );
 
-  const renderItem = ({
-    item,
-    drag,
-  }: {
-    item: MusicDataProps;
-    drag: () => void;
-  }) => {
-    const { isActive } = useOnCellActiveAnimation();
-    const isLastItem = false;
+  const renderItem = useCallback(
+    ({ item, drag }: { item: MusicDataProps; drag: () => void }) => {
+      const { isActive } = useOnCellActiveAnimation();
+      const zIndexByData =
+        data.length - data.findIndex((i: MusicDataProps) => i.id === item.id);
 
-    return (
-      <ScaleDecorator>
-        <OpacityDecorator activeOpacity={0.5}>
-          <ShadowDecorator>
-            <ListItem
-              id={item.id}
-              title={item.title}
-              isLastItem={isLastItem}
-              isActive={isActive}
-              onLongPress={drag}
-              menu={{
-                actions: [
-                  {
-                    title: "Excluir",
-                    action: () => handleDelete(item.id),
-                    color: "#000",
-                    iconName: "trash",
-                  },
-                ],
-              }}
-            />
-          </ShadowDecorator>
-        </OpacityDecorator>
-      </ScaleDecorator>
-    );
-  };
+      return (
+        <ScaleDecorator>
+          <OpacityDecorator activeOpacity={0.5}>
+            <ShadowDecorator>
+              <ListItem
+                id={item.id}
+                title={item.title}
+                isActive={isActive}
+                onLongPress={drag}
+                zIndex={zIndexByData}
+                menu={{
+                  actions: [
+                    {
+                      title: "Excluir",
+                      action: () => handleDelete(item.id),
+                      color: "#000",
+                      iconName: "trash",
+                    },
+                  ],
+                }}
+              />
+            </ShadowDecorator>
+          </OpacityDecorator>
+        </ScaleDecorator>
+      );
+    },
+    [data]
+  );
 
   const modal = useMemo(() => {
     return (
@@ -168,7 +181,7 @@ export default function SetlistPage({ setlistId }: SetlistPageProps) {
         title="Adicionar Música"
         hideModal={closeModalAddMusic}
       >
-        {repertoire.map((item) => (
+        {repertoireWithoutAddedSetlist.map((item) => (
           <ListItem
             key={item.id}
             id={item.id}
@@ -180,37 +193,24 @@ export default function SetlistPage({ setlistId }: SetlistPageProps) {
     );
   }, [modalVisible, repertoire]);
 
-  const getRepertoire = useCallback((savedData: MusicDataProps[]) => {
-    const savedDataKeys: KeyTypeProps = {};
-    savedData.forEach((item) => {
-      savedDataKeys[item.id] = true;
-    });
-
+  const getRepertoire = useCallback(() => {
     findAll({
       key: `bands/5878eab5-b7c3-4da1-89dc-02a3c1d790d7/repertoire`,
       fn: async (musics: MusicDataProps[]) => {
-        const saveData: MusicDataProps[] = [];
-        musics.forEach((item: MusicDataProps) => {
-          if (!savedDataKeys[item.id]) saveData.push(item);
-        });
-        setRepertoire(saveData);
-        setLoading(false);
+        setRepertoire(musics);
       },
     });
   }, []);
 
   const init = useCallback(async () => {
-    findAll({
+    getRepertoire();
+    getRealTime({
       key: `bands/5878eab5-b7c3-4da1-89dc-02a3c1d790d7/setlists/${setlistId}/musics`,
       fn: async (musics: MusicDataProps[]) => {
-        const savedData: MusicDataProps[] = [];
-        musics.forEach((item: MusicDataProps) => {
-          savedData.push(item);
-        });
-        setData(savedData);
-        getRepertoire(savedData);
+        setData(musics);
       },
     });
+    setLoading(false);
   }, [setlistId]);
 
   const onRefresh = useCallback(async () => {
@@ -218,19 +218,6 @@ export default function SetlistPage({ setlistId }: SetlistPageProps) {
     await init();
     setRefreshing(false);
   }, []);
-
-  useFocusEffect(
-    useCallback(() => {
-      setData((data) => {
-        if (!data.length) init();
-      });
-
-      return () => {
-        Alert.alert("Perdeu o foco e vai limpar os dados");
-        setData([]);
-      };
-    }, [])
-  );
 
   useEffect(() => {
     init();
@@ -251,7 +238,7 @@ export default function SetlistPage({ setlistId }: SetlistPageProps) {
   }
 
   return (
-    <GestureHandlerRootView>
+    <>
       <BtnAdd onPress={showModalAddMusic} />
       {modal}
       {data && data.length > 0 && (
@@ -266,6 +253,6 @@ export default function SetlistPage({ setlistId }: SetlistPageProps) {
           }
         />
       )}
-    </GestureHandlerRootView>
+    </>
   );
 }

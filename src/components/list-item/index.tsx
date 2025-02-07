@@ -10,19 +10,19 @@ export default function ListItem({
   onPress = () => {},
   onLongPress = () => {},
   showModal,
-  isLastItem = false,
   isActive = false,
+  zIndex = 1,
 }: listItemProps) {
   return (
-    <Container onLongPress={onLongPress} onPress={onPress} isActive={isActive}>
+    <Container
+      onLongPress={onLongPress}
+      onPress={onPress}
+      isActive={isActive}
+      zIndex={zIndex}
+    >
       <Title>{title}</Title>
       {menu && Object.keys(menu)[0] && (
-        <Menu
-          id={id}
-          actions={menu.actions}
-          showModal={showModal}
-          isLastItem={isLastItem}
-        />
+        <Menu id={id} actions={menu.actions} showModal={showModal} />
       )}
     </Container>
   );

@@ -46,10 +46,7 @@ export default function SetlistsPage() {
   const addSetlist = useCallback(() => {
     add({
       key: `bands/5878eab5-b7c3-4da1-89dc-02a3c1d790d7/setlists`,
-      data: {
-        ...setlist,
-        order: data?.length ? data.length + 1 : 1,
-      },
+      data: setlist,
     });
     init();
   }, [data, setlist]);
@@ -132,6 +129,38 @@ export default function SetlistsPage() {
     router.navigate(`/setlist/${setlistId}`, { relativeToDirectory: true });
   }, []);
 
+  const renderItem = useCallback(
+    ({ item }: { item: SetlistDataProps; index: number }) => {
+      const zIndexByData =
+        data.length - data.findIndex((i) => i.id === item.id);
+      return (
+        <ListItem
+          id={item.id}
+          title={item.title}
+          onPress={() => handlePressItem(item.id)}
+          zIndex={zIndexByData}
+          menu={{
+            actions: [
+              {
+                title: "Editar",
+                action: () => handleEdit(item.id),
+                color: "#000",
+                iconName: "edit",
+              },
+              {
+                title: "Excluir",
+                action: () => handleDelete(item.id),
+                color: "#000",
+                iconName: "trash",
+              },
+            ],
+          }}
+        />
+      );
+    },
+    [data]
+  );
+
   const onRefresh = useCallback(async () => {
     setRefreshing(true);
     await init();
@@ -167,30 +196,7 @@ export default function SetlistsPage() {
       {data && data.length > 0 && (
         <FlatList
           data={data}
-          renderItem={({ item, index }) => (
-            <ListItem
-              id={item.id}
-              title={item.title}
-              onPress={() => handlePressItem(item.id)}
-              isLastItem={data.length > 1 && data.length - 1 === index}
-              menu={{
-                actions: [
-                  {
-                    title: "Editar",
-                    action: () => handleEdit(item.id),
-                    color: "#000",
-                    iconName: "edit",
-                  },
-                  {
-                    title: "Excluir",
-                    action: () => handleDelete(item.id),
-                    color: "#000",
-                    iconName: "trash",
-                  },
-                ],
-              }}
-            />
-          )}
+          renderItem={renderItem}
           keyExtractor={(item) => item.id}
           refreshControl={
             <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />

@@ -11,18 +11,14 @@ export const Container = styled.TouchableOpacity`
   top: 50%;
 `;
 
-type ContentProps = {
-  styleTopValue: number;
-};
-
-export const Content = styled.View<ContentProps>`
+export const Content = styled.View`
   position: absolute;
   background: #fff;
   width: 100px;
   right: 32px;
   padding: 12px;
   gap: 16px;
-  top: ${({ styleTopValue }) => styleTopValue}px;
+  top: 0;
 `;
 
 export const MenuItem = styled.TouchableOpacity`

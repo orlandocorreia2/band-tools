@@ -44,7 +44,7 @@ export const del = async ({ key, data }: SaveProps) => {
 export const getRealTime = ({ key, fn }: GetRealTimeProps) => {
   const reference = ref(db, key);
   onValue(reference, (snapshot) => {
-    const data = snapshot.val();
+    const data = snapshot.val() || [];
     fn(data);
   });
 };

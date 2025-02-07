@@ -7,6 +7,6 @@ export type listItemProps = {
   onLongPress?: () => void;
   menu?: MenuProps;
   showModal?: () => void;
-  isLastItem?: boolean;
   isActive?: boolean;
+  zIndex?: number;
 };

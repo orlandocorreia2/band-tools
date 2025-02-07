@@ -58,6 +58,33 @@ export default function RepertoirePage() {
     init();
   }, [data, music]);
 
+  const renderItem = useCallback(({ item }: { item: MusicDataProps }) => {
+    const zIndexByData = data.length - data.findIndex((i) => i.id === item.id);
+    return (
+      <ListItem
+        id={item.id}
+        title={item.title}
+        zIndex={zIndexByData}
+        menu={{
+          actions: [
+            {
+              title: "Editar",
+              action: () => handleEdit(item.id),
+              color: "#000",
+              iconName: "edit",
+            },
+            {
+              title: "Excluir",
+              action: () => handleDelete(item.id),
+              color: "#000",
+              iconName: "trash",
+            },
+          ],
+        }}
+      />
+    );
+  }, []);
+
   const updateMusic = useCallback(() => {
     save({
       key: `bands/5878eab5-b7c3-4da1-89dc-02a3c1d790d7/repertoire/${music.id}`,
@@ -220,29 +247,7 @@ export default function RepertoirePage() {
       {data && data.length > 0 && (
         <FlatList
           data={data}
-          renderItem={({ item, index }) => (
-            <ListItem
-              id={item.id}
-              title={item.title}
-              isLastItem={data.length > 1 && data.length - 1 === index}
-              menu={{
-                actions: [
-                  {
-                    title: "Editar",
-                    action: () => handleEdit(item.id),
-                    color: "#000",
-                    iconName: "edit",
-                  },
-                  {
-                    title: "Excluir",
-                    action: () => handleDelete(item.id),
-                    color: "#000",
-                    iconName: "trash",
-                  },
-                ],
-              }}
-            />
-          )}
+          renderItem={renderItem}
           keyExtractor={(item) => item.id}
           refreshControl={
             <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
