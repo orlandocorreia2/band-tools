@@ -39,32 +39,6 @@ export default function SetlistPage({ setlistId }: SetlistPageProps) {
   const [data, setData] = useState<MusicDataProps[]>([]);
   const [repertoire, setRepertoire] = useState<MusicDataProps[]>([]);
 
-  const showModalAddMusic = useCallback(() => {
-    if (
-      !repertoireWithoutAddedSetlist ||
-      !repertoireWithoutAddedSetlist.length
-    ) {
-      Alert.alert(
-        "Adicionar Música",
-        "Não há mais músicas para adicionar no setilist. Deseja acessar a página do repertório para incluir mais músicas?",
-        [
-          {
-            text: "Cancelar",
-            style: "cancel",
-          },
-          {
-            text: "Sim",
-            onPress: () => {
-              router.navigate("/repertoire");
-            },
-          },
-        ]
-      );
-      return;
-    }
-    setModalVisible(true);
-  }, [repertoireWithoutAddedSetlist]);
-
   const closeModalAddMusic = useCallback(() => {
     setModalVisible(false);
   }, []);
@@ -97,6 +71,32 @@ export default function SetlistPage({ setlistId }: SetlistPageProps) {
     });
     return response;
   }, [repertoire, data]);
+
+  const showModalAddMusic = useCallback(() => {
+    if (
+      !repertoireWithoutAddedSetlist ||
+      !repertoireWithoutAddedSetlist.length
+    ) {
+      Alert.alert(
+        "Adicionar Música",
+        "Não há mais músicas para adicionar no setilist. Deseja acessar a página do repertório para incluir mais músicas?",
+        [
+          {
+            text: "Cancelar",
+            style: "cancel",
+          },
+          {
+            text: "Sim",
+            onPress: () => {
+              router.navigate("/repertoire");
+            },
+          },
+        ]
+      );
+      return;
+    }
+    setModalVisible(true);
+  }, [repertoireWithoutAddedSetlist]);
 
   const handleDelete = useCallback(
     (id: string) => {
