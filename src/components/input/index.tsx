@@ -3,10 +3,11 @@ import { Container, TextInput, Title } from "./styles";
 
 export default function Input({
   title,
-  value,
+  value = "",
   onChangeText,
   keyboardType = "default",
   multiline = false,
+  maxLength = 1000000,
 }: InputProps) {
   return (
     <Container>
@@ -16,6 +17,7 @@ export default function Input({
         onChangeText={onChangeText}
         keyboardType={keyboardType}
         multiline={multiline}
+        maxLength={maxLength}
       />
     </Container>
   );

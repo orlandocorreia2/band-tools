@@ -45,7 +45,7 @@ export default function DrawerHeader() {
               <Icon name="link" color="#fff" />
             </Pressable>
           </ContainerSocialButtons>
-          <Title>Ver: 1.0.0</Title>
+          <Title>Ver: 1.1.0</Title>
         </ContainerInfo>
       </Container>
       <Divisor />
