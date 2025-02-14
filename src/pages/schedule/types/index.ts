@@ -4,6 +4,14 @@ export type ScheduleDataProps = {
   id: any;
   title: string;
   date: Date;
+  dayOfWeek:
+    | "monday"
+    | "tuesday"
+    | "wednesday"
+    | "thursday"
+    | "friday"
+    | "saturday"
+    | "sunday";
   startHour: Date;
   endHour: Date;
   phone: string;

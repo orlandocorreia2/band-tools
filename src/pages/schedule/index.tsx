@@ -11,9 +11,16 @@ import { useFocusEffect } from "expo-router";
 import { ScheduleDataProps } from "./types";
 import DateTimePicker from "@/src/components/datetimepicker";
 import { DateTimePickerEvent } from "@react-native-community/datetimepicker";
-import { formatDatePtBr, formatHour, now } from "@/src/utils/date";
+import {
+  dayOfWeekByDate,
+  formatDatePtBr,
+  formatHour,
+  now,
+  nowTimeZone,
+} from "@/src/utils/date";
 
 import { Info, NoContent } from "./styles";
+import Picker from "@/src/components/picker";
 
 export default function SetlistsPage() {
   let countItems = 0;
@@ -24,7 +31,7 @@ export default function SetlistsPage() {
   const [modalVisible, setModalVisible] = useState(false);
   const [data, setData] = useState<ScheduleDataProps[]>([]);
   const [schedule, setSchedule] = useState<ScheduleDataProps>({
-    date: now(),
+    date: nowTimeZone(),
     startHour: now(),
     endHour: now(),
   } as ScheduleDataProps);
@@ -36,13 +43,13 @@ export default function SetlistsPage() {
   const closeModalAddMusic = useCallback(() => {
     setModalVisible(false);
     setSchedule({
-      date: now(),
+      date: nowTimeZone(),
       startHour: now(),
       endHour: now(),
     } as ScheduleDataProps);
   }, []);
 
-  const changeSetlist = useCallback((scheduleItem: ScheduleDataProps) => {
+  const changeSchedule = useCallback((scheduleItem: ScheduleDataProps) => {
     setSchedule(scheduleItem);
   }, []);
 
@@ -64,7 +71,12 @@ export default function SetlistsPage() {
   const addSchedule = useCallback(() => {
     add({
       key: `bands/5878eab5-b7c3-4da1-89dc-02a3c1d790d7/schedules`,
-      data: schedule,
+      data: {
+        ...schedule,
+        date: schedule.date.toISOString(),
+        startHour: schedule.startHour.toISOString(),
+        endHour: schedule.endHour.toISOString(),
+      },
     });
     init();
   }, [data, schedule]);
@@ -74,7 +86,12 @@ export default function SetlistsPage() {
     if (setlistId) {
       save({
         key: `bands/5878eab5-b7c3-4da1-89dc-02a3c1d790d7/schedules/${setlistId}`,
-        data: schedule,
+        data: {
+          ...schedule,
+          date: schedule.date.toISOString(),
+          startHour: schedule.startHour.toISOString(),
+          endHour: schedule.endHour.toISOString(),
+        },
       });
       init();
     }
@@ -116,6 +133,7 @@ export default function SetlistsPage() {
         setSchedule((scheduleData) => ({
           ...scheduleData,
           date: value,
+          dayOfWeek: dayOfWeekByDate(value),
         }));
       }
     },
@@ -167,7 +185,9 @@ export default function SetlistsPage() {
         <Input
           title="Título"
           value={schedule.title}
-          onChangeText={(value) => changeSetlist({ ...schedule, title: value })}
+          onChangeText={(value) =>
+            changeSchedule({ ...schedule, title: value })
+          }
         />
 
         <DateTimePicker
@@ -176,6 +196,21 @@ export default function SetlistsPage() {
           placeholder={formatDatePtBr(schedule.date)}
           mode={"date"}
           onChange={handleChangeDatetime}
+        />
+
+        <Picker
+          title="Dia da semana"
+          selectedValue={schedule.dayOfWeek}
+          items={[
+            { label: "Segunda", value: "monday" },
+            { label: "Terça", value: "tuesday" },
+            { label: "Quarta", value: "wednesday" },
+            { label: "Quinta", value: "thursday" },
+            { label: "Sexta", value: "friday" },
+            { label: "Sábado", value: "saturday" },
+            { label: "Domingo", value: "monday" },
+          ]}
+          enabled={false}
         />
 
         <DateTimePicker
@@ -199,7 +234,9 @@ export default function SetlistsPage() {
           value={schedule.phone}
           keyboardType={"phone-pad"}
           maxLength={11}
-          onChangeText={(value) => changeSetlist({ ...schedule, phone: value })}
+          onChangeText={(value) =>
+            changeSchedule({ ...schedule, phone: value })
+          }
         />
 
         <Input
@@ -208,7 +245,7 @@ export default function SetlistsPage() {
           keyboardType={"phone-pad"}
           maxLength={11}
           onChangeText={(value) =>
-            changeSetlist({ ...schedule, phone2: value })
+            changeSchedule({ ...schedule, phone2: value })
           }
         />
 
@@ -216,7 +253,7 @@ export default function SetlistsPage() {
           title="Endereço"
           value={schedule.address}
           onChangeText={(value) =>
-            changeSetlist({ ...schedule, address: value })
+            changeSchedule({ ...schedule, address: value })
           }
         />
 
@@ -225,7 +262,7 @@ export default function SetlistsPage() {
           value={schedule.observations}
           multiline={true}
           onChangeText={(value) =>
-            changeSetlist({ ...schedule, observations: value })
+            changeSchedule({ ...schedule, observations: value })
           }
         />
       </Modal>
@@ -238,7 +275,12 @@ export default function SetlistsPage() {
       fn: async (schedules: ScheduleDataProps[]) => {
         const saveData: ScheduleDataProps[] = [];
         schedules.forEach((item: ScheduleDataProps) => {
-          saveData.push(item);
+          saveData.push({
+            ...item,
+            date: new Date(item.date),
+            startHour: new Date(item.startHour),
+            endHour: new Date(item.endHour),
+          });
         });
         setData(saveData);
         setLoading(false);
