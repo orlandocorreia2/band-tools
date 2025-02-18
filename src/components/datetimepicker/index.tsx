@@ -11,7 +11,7 @@ import {
   LabelContainer,
   LabelText,
 } from "./styles";
-import { now } from "@/src/utils/date";
+import { getDate } from "@/src/utils/date";
 
 export default function DateTimePicker({
   value,
@@ -53,7 +53,7 @@ export default function DateTimePicker({
           onChange={handleChange}
           style={style}
           display={"default"}
-          minimumDate={now()}
+          minimumDate={getDate()}
           // locale={"pt-BR"}
           // timeZoneName="America/Sao_Paulo"
           // timeZoneOffsetInMinutes={180}

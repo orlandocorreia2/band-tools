@@ -1,35 +1,26 @@
 import { DaysOfWeek } from "../types";
 
-const options = { timeZone: "America/Sao_Paulo" };
-
-export const now = () => {
-  return new Date();
+export const getDate = (date?: Date) => {
+  if (date) return date;
+  return getTimezone(new Date());
 };
 
-export const nowTimeZone = () => {
-  const date = new Date();
+export const getTimezone = (date: Date) => {
   date.setHours(date.getHours() - 3);
   return date;
 };
 
-export const dateTimeZone = (value: Date) => {
-  return new Date();
-};
-
-export const formatHour = (value: Date) => {
+export const dateString = (value: Date) => {
   try {
-    return `${value.getHours().toString().padStart(2, "0")}:${value
-      .getUTCMinutes()
-      .toString()
-      .padStart(2, "0")}`;
+    return value.toISOString().split("T")[0];
   } catch (error) {
     return "";
   }
 };
 
-export const formatDatePtBr = (value: Date) => {
+export const hourString = (value: Date) => {
   try {
-    return value.toISOString().split("T")[0].split("-").reverse().join("/");
+    return value.toISOString().split("T")[1].split(".")[0];
   } catch (error) {
     return "";
   }

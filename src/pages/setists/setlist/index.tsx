@@ -112,13 +112,11 @@ export default function SetlistPage({ setlistId }: SetlistPageProps) {
           {
             text: "Sim",
             onPress: () => {
-              const itemExclude = data.find((item) => item.id === id);
-              if (itemExclude) {
-                save({
-                  key: `bands/5878eab5-b7c3-4da1-89dc-02a3c1d790d7/setlists/${setlistId}/musics/${itemExclude.id}`,
-                  data: null,
-                });
-              }
+              const newData = data.filter((item) => item.id !== id) || [];
+              save({
+                key: `bands/5878eab5-b7c3-4da1-89dc-02a3c1d790d7/setlists/${setlistId}/musics`,
+                data: newData,
+              });
               init();
               handleMenuIdOpened("");
             },

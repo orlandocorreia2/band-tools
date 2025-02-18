@@ -17,8 +17,12 @@ export const Container = styled.TouchableOpacity<ContainerProps>`
   elevation: ${({ zIndex }) => zIndex};
 `;
 
+export const ContainerTitle = styled.View`
+  width: 95%;
+`;
+
 export const Title = styled.Text`
-  font-size: 32px;
+  font-size: 26px;
   color: #cccccc;
   font-weight: bold;
 `;

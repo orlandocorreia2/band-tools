@@ -7,16 +7,15 @@ import { add, findAll, save } from "@/src/infra/database/firebase";
 import Loading from "@/src/components/loading";
 import { useMenu } from "@/src/contexts/menu";
 import ListItem from "@/src/components/list-item";
-import { useFocusEffect } from "expo-router";
 import { ScheduleDataProps } from "./types";
 import DateTimePicker from "@/src/components/datetimepicker";
 import { DateTimePickerEvent } from "@react-native-community/datetimepicker";
 import {
+  dateString,
   dayOfWeekByDate,
-  formatDatePtBr,
-  formatHour,
-  now,
-  nowTimeZone,
+  getDate,
+  getTimezone,
+  hourString,
 } from "@/src/utils/date";
 
 import { Info, NoContent } from "./styles";
@@ -30,23 +29,16 @@ export default function SetlistsPage() {
   const [loading, setLoading] = useState(true);
   const [modalVisible, setModalVisible] = useState(false);
   const [data, setData] = useState<ScheduleDataProps[]>([]);
-  const [schedule, setSchedule] = useState<ScheduleDataProps>({
-    date: nowTimeZone(),
-    startHour: now(),
-    endHour: now(),
-  } as ScheduleDataProps);
+  const [schedule, setSchedule] = useState<ScheduleDataProps>(
+    {} as ScheduleDataProps
+  );
 
   const showModalAddSchedule = useCallback(() => {
     setModalVisible(true);
   }, []);
 
   const closeModalAddMusic = useCallback(() => {
-    setModalVisible(false);
-    setSchedule({
-      date: nowTimeZone(),
-      startHour: now(),
-      endHour: now(),
-    } as ScheduleDataProps);
+    clear();
   }, []);
 
   const changeSchedule = useCallback((scheduleItem: ScheduleDataProps) => {
@@ -55,13 +47,9 @@ export default function SetlistsPage() {
 
   const handleEdit = useCallback(
     (id: string) => {
-      const indexSetlist = data.findIndex((item) => item.id == id);
-      if (!indexSetlist) {
-        data[indexSetlist].date = data[indexSetlist].date || new Date();
-        data[indexSetlist].startHour =
-          data[indexSetlist].startHour || new Date();
-        data[indexSetlist].endHour = data[indexSetlist].endHour || new Date();
-        setSchedule(data[indexSetlist]);
+      const itemSetlist = data.find((i) => i.id === id);
+      if (itemSetlist) {
+        setSchedule(itemSetlist);
         setModalVisible(true);
       }
     },
@@ -73,13 +61,13 @@ export default function SetlistsPage() {
       key: `bands/5878eab5-b7c3-4da1-89dc-02a3c1d790d7/schedules`,
       data: {
         ...schedule,
-        date: schedule.date.toISOString(),
-        startHour: schedule.startHour.toISOString(),
-        endHour: schedule.endHour.toISOString(),
+        date: dateString(schedule.date),
+        startHour: hourString(schedule.startHour),
+        endHour: hourString(schedule.endHour),
       },
     });
     init();
-  }, [data, schedule]);
+  }, [schedule]);
 
   const updateSchedule = useCallback(() => {
     const setlistId = data.find((item) => item.id === schedule.id)?.id;
@@ -89,8 +77,8 @@ export default function SetlistsPage() {
         data: {
           ...schedule,
           date: schedule.date.toISOString(),
-          startHour: schedule.startHour.toISOString(),
-          endHour: schedule.endHour.toISOString(),
+          startHour: hourString(schedule.startHour),
+          endHour: hourString(schedule.endHour),
         },
       });
       init();
@@ -130,10 +118,11 @@ export default function SetlistsPage() {
   const handleChangeDatetime = useCallback(
     (_: DateTimePickerEvent, value: Date | undefined) => {
       if (value) {
+        const newValue = getTimezone(value);
         setSchedule((scheduleData) => ({
           ...scheduleData,
-          date: value,
-          dayOfWeek: dayOfWeekByDate(value),
+          date: newValue,
+          dayOfWeek: dayOfWeekByDate(newValue),
         }));
       }
     },
@@ -143,9 +132,10 @@ export default function SetlistsPage() {
   const handleChangeStartHourTime = useCallback(
     (_: DateTimePickerEvent, value: Date | undefined) => {
       if (value) {
+        const newValue = getTimezone(value);
         setSchedule((scheduleData) => ({
           ...scheduleData,
-          startHour: value,
+          startHour: newValue,
         }));
       }
     },
@@ -155,9 +145,10 @@ export default function SetlistsPage() {
   const handleChangeEndHourTime = useCallback(
     (_: DateTimePickerEvent, value: Date | undefined) => {
       if (value) {
+        const newValue = getTimezone(value);
         setSchedule((scheduleData) => ({
           ...scheduleData,
-          endHour: value,
+          endHour: newValue,
         }));
       }
     },
@@ -166,12 +157,7 @@ export default function SetlistsPage() {
 
   const handleSave = useCallback(() => {
     schedule.id ? updateSchedule() : addSchedule();
-    setSchedule({
-      date: now(),
-      startHour: now(),
-      endHour: now(),
-    } as ScheduleDataProps);
-    setModalVisible(false);
+    clear();
   }, [schedule]);
 
   const modal = useMemo(() => {
@@ -193,7 +179,7 @@ export default function SetlistsPage() {
         <DateTimePicker
           value={schedule.date}
           label="Data"
-          placeholder={formatDatePtBr(schedule.date)}
+          placeholder={dateString(schedule.date)}
           mode={"date"}
           onChange={handleChangeDatetime}
         />
@@ -216,7 +202,7 @@ export default function SetlistsPage() {
         <DateTimePicker
           value={schedule.startHour}
           label="Hora Início"
-          placeholder={formatHour(schedule.startHour)}
+          placeholder={hourString(schedule.startHour)}
           mode={"time"}
           onChange={handleChangeStartHourTime}
         />
@@ -224,7 +210,7 @@ export default function SetlistsPage() {
         <DateTimePicker
           value={schedule.endHour}
           label="Hora Fim"
-          placeholder={formatHour(schedule.endHour)}
+          placeholder={hourString(schedule.endHour)}
           mode={"time"}
           onChange={handleChangeEndHourTime}
         />
@@ -269,7 +255,17 @@ export default function SetlistsPage() {
     );
   }, [modalVisible, schedule]);
 
+  const clear = useCallback(() => {
+    setModalVisible(false);
+    setSchedule({
+      date: getDate(),
+      startHour: getDate(),
+      endHour: getDate(),
+    } as ScheduleDataProps);
+  }, []);
+
   const init = useCallback(async () => {
+    clear();
     findAll({
       key: "bands/5878eab5-b7c3-4da1-89dc-02a3c1d790d7/schedules",
       fn: async (schedules: ScheduleDataProps[]) => {
@@ -277,9 +273,9 @@ export default function SetlistsPage() {
         schedules.forEach((item: ScheduleDataProps) => {
           saveData.push({
             ...item,
-            date: new Date(item.date),
-            startHour: new Date(item.startHour),
-            endHour: new Date(item.endHour),
+            date: getTimezone(new Date(item.date)),
+            startHour: getTimezone(new Date(`${item.date} ${item.startHour}`)),
+            endHour: getTimezone(new Date(`${item.date} ${item.endHour}`)),
           });
         });
         setData(saveData);
@@ -294,8 +290,9 @@ export default function SetlistsPage() {
       countItems++;
       return (
         <ListItem
+          key={item.id}
           id={item.id}
-          title={item.title}
+          title={`${item.title}-${dateString(item.date)}-${item.dayOfWeek}`}
           zIndex={zIndexByData}
           menu={{
             actions: [
@@ -324,10 +321,6 @@ export default function SetlistsPage() {
     await init();
     setRefreshing(false);
   }, []);
-
-  useFocusEffect(() => {
-    init();
-  });
 
   useEffect(() => {
     init();

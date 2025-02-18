@@ -1,6 +1,6 @@
 import React from "react";
 import { listItemProps } from "./types/item";
-import { Container, Title } from "./styles";
+import { Container, ContainerTitle, Title } from "./styles";
 import Menu from "../menu";
 
 export default function ListItem({
@@ -20,7 +20,10 @@ export default function ListItem({
       isActive={isActive}
       zIndex={zIndex}
     >
-      <Title>{title}</Title>
+      <ContainerTitle>
+        <Title>{title}</Title>
+      </ContainerTitle>
+
       {menu && Object.keys(menu)[0] && (
         <Menu id={id} actions={menu.actions} showModal={showModal} />
       )}
